@@ -1,0 +1,13 @@
+.vue-markdown-wrapper .text-segmenter,
+.vue-markdown-wrapper > * {
+  animation: fade-in 0.5s ease-in-out;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}

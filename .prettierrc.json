@@ -1,0 +1,9 @@
+{
+  "semi": true,
+  "singleQuote": false,
+  "trailingComma": "es5",
+  "tabWidth": 2,
+  "jsxSingleQuote": true,
+  "endOfLine": "auto",
+  "plugins": ["prettier-plugin-tailwindcss"]
+}

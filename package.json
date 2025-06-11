@@ -1,0 +1,48 @@
+{
+  "name": "vue-markdown-renderer",
+  "version": "0.0.1",
+  "description": "Tranform markdown string to vue component with `mdast-> hast-> vue node`",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/src/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "pnpm -F playground run dev",
+    "build": "vite build",
+    "build:playground": "pnpm -F playground run build",
+    "preview:playground": "pnpm -F playground run preview",
+    "prettier-lint": "prettier --write ."
+  },
+  "keywords": [
+    "vue",
+    "markdown",
+    "stream-markdown",
+    "markdown to html",
+    "markdown to vue"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/linzhe141/vue-markdown-renderer"
+  },
+  "author": "linzhe141@qq.com",
+  "license": "ISC",
+  "packageManager": "pnpm@10.5.1",
+  "devDependencies": {
+    "prettier": "^3.5.2",
+    "prettier-plugin-tailwindcss": "^0.6.11",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.0",
+    "vite-plugin-dts": "^4.5.1",
+    "vitest": "^3.0.7"
+  },
+  "dependencies": {
+    "hast-util-to-jsx-runtime": "^2.3.6",
+    "remark-parse": "^11.0.0",
+    "remark-rehype": "^11.1.2",
+    "unified": "^11.0.5",
+    "vfile": "^6.0.3",
+    "vue": "^3.5.13"
+  }
+}
