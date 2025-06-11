@@ -1,6 +1,6 @@
 <script setup>
 import { VueMarkdownRenderer } from "../../src";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import "./animation.css";
 function createStream(text, chunkSize = 10, delay = 50) {
   let position = 0;
@@ -26,7 +26,7 @@ function createStream(text, chunkSize = 10, delay = 50) {
   });
 }
 const mdText = ref("");
-const isRender = ref(false);
+const isRender = ref(true);
 async function clickHandle() {
   mdText.value = "";
   isRender.value = true;
@@ -38,11 +38,12 @@ async function clickHandle() {
   }
   isRender.value = false;
 }
+onMounted(clickHandle);
 </script>
 
 <template>
   <div>
-    <button @click="clickHandle" :disabled="isRender">grenerate ~</button>
+    <button @click="clickHandle" :disabled="isRender">re-grenerate ~</button>
     <article class="vue-markdown-wrapper">
       <VueMarkdownRenderer :md="mdText"></VueMarkdownRenderer>
     </article>
