@@ -28,6 +28,7 @@ function createStream(text, chunkSize = 10, delay = 50) {
 const mdText = ref("");
 const isRender = ref(false);
 async function clickHandle() {
+  mdText.value = "";
   isRender.value = true;
   const res = await fetch("./md.md");
   const md = await res.text();
