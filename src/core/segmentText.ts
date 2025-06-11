@@ -1,4 +1,4 @@
-import { OptionsBase } from "hast-util-to-jsx-runtime/lib/types";
+import type { Options } from "hast-util-to-jsx-runtime";
 import {
   defineComponent,
   h,
@@ -46,7 +46,7 @@ const SegmentTextImpl = defineComponent({
 
 const components = ["p", "h1", "h2", "h3", "li", "strong"] as const;
 
-type ComponentsMap = NonNullable<OptionsBase["components"]>;
+type ComponentsMap = NonNullable<Options["components"]>;
 
 export const componentsMap = components.reduce((res, key) => {
   const item = {} as ComponentsMap;

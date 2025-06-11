@@ -1,4 +1,5 @@
 import { h, defineComponent, PropType } from "vue";
+// @ts-expect-error todo fix
 import { Fragment, jsx, jsxs } from "vue/jsx-runtime";
 import { toJsxRuntime } from "hast-util-to-jsx-runtime";
 import remarkParse from "remark-parse";
@@ -13,7 +14,7 @@ interface RemarkRehypeOptions {
 }
 
 export default defineComponent({
-  name: "VueMarkdown",
+  name: "VueMarkdownRenderer",
   props: {
     md: {
       type: String as PropType<string>,
@@ -54,7 +55,7 @@ export default defineComponent({
         components: componentsMap,
         Fragment,
         jsx,
-        jsxs,
+        jsxs: jsx,
         passKeys: true,
         passNode: true,
       });
