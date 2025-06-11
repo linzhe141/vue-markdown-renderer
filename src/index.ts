@@ -1,2 +1,3 @@
 import VueMarkdownRenderer from "./core/VueMarkdownRenderer";
-export { VueMarkdownRenderer };
+import { initShikiHighlighter } from "./core/shiki";
+export { VueMarkdownRenderer, initShikiHighlighter };

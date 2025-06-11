@@ -5,7 +5,12 @@ import {
   type PropType,
   type VNode,
   type Component,
+  ref,
+  inject,
 } from "vue";
+import { ShikiCachedRenderer } from "shiki-stream/vue";
+import theme from "@shikijs/themes/nord";
+
 interface TextNode {
   type: "text";
   value: string;
@@ -44,6 +49,40 @@ const SegmentTextImpl = defineComponent({
   },
 });
 
+const Pre = defineComponent({
+  props: {
+    node: {
+      type: Object as PropType<ElementNode>,
+      required: true,
+    },
+  },
+  setup(props) {
+    const codeChunk = ref("");
+    const highlighter = inject("highlighter");
+    return () => {
+      props;
+      const codeNode = props.node.children[0];
+      if (
+        codeNode &&
+        codeNode.type === "element" &&
+        codeNode.tagName === "code"
+      ) {
+        const codeTextNode = codeNode.children[0];
+        if (codeTextNode.type === "text") {
+          const codeText = codeTextNode.value;
+          codeChunk.value = codeText;
+        }
+      }
+      debugger;
+      return h(ShikiCachedRenderer, {
+        highlighter: highlighter.value,
+        code: codeChunk.value,
+        theme: "nord",
+      });
+    };
+  },
+});
+
 const components = ["p", "h1", "h2", "h3", "li", "strong"] as const;
 
 type ComponentsMap = NonNullable<Options["components"]>;
@@ -71,3 +110,6 @@ export const componentsMap = components.reduce((res, key) => {
   });
   return Object.assign(res, item);
 }, {} as ComponentsMap);
+Object.assign(componentsMap, {
+  pre: Pre,
+});

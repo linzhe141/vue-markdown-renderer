@@ -1,4 +1,4 @@
-import { h, defineComponent, PropType } from "vue";
+import { h, defineComponent, PropType, onMounted, ref, provide } from "vue";
 // @ts-expect-error todo fix
 import { Fragment, jsx, jsxs } from "vue/jsx-runtime";
 import { toJsxRuntime } from "hast-util-to-jsx-runtime";
@@ -8,6 +8,7 @@ import { unified } from "unified";
 import { VFile } from "vfile";
 import { Plugin } from "unified";
 import { componentsMap } from "./segmentText";
+import { initShikiHighlighter } from "./shiki";
 interface RemarkRehypeOptions {
   allowDangerousHtml?: boolean;
   [key: string]: any;
@@ -34,6 +35,11 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const highlighter = ref<any>(null);
+    provide("highlighter", highlighter);
+    onMounted(async () => {
+      highlighter.value = await initShikiHighlighter();
+    });
     const createProcessor = () => {
       const { rehypePlugins, remarkPlugins, remarkRehypeOptions } = props;
 
