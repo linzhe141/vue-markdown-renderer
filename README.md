@@ -22,8 +22,9 @@ You can add css animations for `.text-segmenter` and `shiki-stream token` to imp
 
 ```css
 /* animation.css */
+.vue-markdown-wrapper > *,
 .vue-markdown-wrapper .text-segmenter,
-.vue-markdown-wrapper > * {
+.vue-markdown-wrapper .shiki-stream span {
   animation: fade-in 0.5s ease-in-out;
 }
 
@@ -35,6 +36,7 @@ You can add css animations for `.text-segmenter` and `shiki-stream token` to imp
     opacity: 1;
   }
 }
+
 ```
 
 then use this animation
