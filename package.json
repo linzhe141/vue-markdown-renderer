@@ -1,16 +1,15 @@
 {
   "name": "vue-markdown-renderer",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "Tranform markdown string to vue component with `mdast-> hast-> vue node`",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
+  "module": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
     "dev": "pnpm -F playground run dev",
-    "build": "vite build",
+    "build": "tsc",
     "build:playground": "pnpm -F playground run build",
     "preview:playground": "pnpm -F playground run preview",
     "prettier-lint": "prettier --write ."

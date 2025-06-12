@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "outDir": "dist",
+    "target": "ESNext",
+    "module": "esnext",
+    "sourceMap": true,
+    "moduleResolution": "bundler",
+    "allowJs": false,
+    "strict": true,
+    "noUnusedLocals": false,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "removeComments": false,
+    "noImplicitAny": false,
+    "skipLibCheck": true,
+    "rootDir": ".",
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["src"]
+}
