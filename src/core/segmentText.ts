@@ -4,13 +4,10 @@ import {
   h,
   type PropType,
   type VNode,
-  type Component,
   ref,
   inject,
 } from "vue";
 import { ShikiCachedRenderer } from "shiki-stream/vue";
-import theme from "@shikijs/themes/nord";
-
 interface TextNode {
   type: "text";
   value: string;
@@ -23,6 +20,10 @@ interface ElementNode {
 }
 
 type Node = TextNode | ElementNode;
+
+export const components = ["p", "h1", "h2", "h3", "li", "strong"] as const;
+
+type ComponentsMap = NonNullable<Options["components"]>;
 
 function wrap(node: Node): VNode | VNode[] {
   if (node.type === "text") {
@@ -50,6 +51,7 @@ const SegmentTextImpl = defineComponent({
 });
 
 const Pre = defineComponent({
+  name: "pre-wrapper",
   props: {
     node: {
       type: Object as PropType<ElementNode>,
@@ -58,9 +60,8 @@ const Pre = defineComponent({
   },
   setup(props) {
     const codeChunk = ref("");
-    const highlighter = inject("highlighter");
+    const highlighter = inject("highlighter") as any;
     return () => {
-      props;
       const codeNode = props.node.children[0];
       if (
         codeNode &&
@@ -69,27 +70,31 @@ const Pre = defineComponent({
       ) {
         const codeTextNode = codeNode.children[0];
         if (codeTextNode.type === "text") {
-          const codeText = codeTextNode.value;
+          const lastChar = codeTextNode.value.at(-1);
+          const codeText = codeTextNode.value.slice(
+            0,
+            codeTextNode.value.length - (lastChar === "\n" ? 1 : 0)
+          );
+          if (codeText.includes("`")) {
+            console.log("todo handle `");
+          }
           codeChunk.value = codeText;
         }
       }
-      debugger;
       return h(ShikiCachedRenderer, {
         highlighter: highlighter.value,
         code: codeChunk.value,
-        theme: "nord",
+        lang: "js",
+        theme: "light-plus",
       });
     };
   },
 });
 
-const components = ["p", "h1", "h2", "h3", "li", "strong"] as const;
-
-type ComponentsMap = NonNullable<Options["components"]>;
-
 export const componentsMap = components.reduce((res, key) => {
   const item = {} as ComponentsMap;
   item[key] = defineComponent({
+    name: key + "-wrapper",
     props: {
       node: {
         type: Object as PropType<ElementNode>,

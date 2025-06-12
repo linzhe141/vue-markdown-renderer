@@ -9,7 +9,7 @@ let highlighter: Highlighter | null = null;
 export async function initShikiHighlighter() {
   if (highlighter) return highlighter;
   const _highlighter = await createHighlighterCore({
-    themes: [import("@shikijs/themes/nord")],
+    themes: [import("@shikijs/themes/light-plus")],
     langs: [
       import("@shikijs/langs/json"),
       import("@shikijs/langs/ts"),

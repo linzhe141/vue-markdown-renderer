@@ -1,6 +1,13 @@
-import { h, defineComponent, PropType, onMounted, ref, provide } from "vue";
-// @ts-expect-error todo fix
-import { Fragment, jsx, jsxs } from "vue/jsx-runtime";
+import {
+  h,
+  defineComponent,
+  PropType,
+  onMounted,
+  ref,
+  provide,
+  type Component,
+} from "vue";
+import { Fragment } from "vue/jsx-runtime";
 import { toJsxRuntime } from "hast-util-to-jsx-runtime";
 import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
@@ -12,6 +19,20 @@ import { initShikiHighlighter } from "./shiki";
 interface RemarkRehypeOptions {
   allowDangerousHtml?: boolean;
   [key: string]: any;
+}
+
+function jsx(type: any, props: Record<any, any>, key: any) {
+  const { children } = props;
+  delete props.children;
+  if (arguments.length > 2) {
+    props.key = key;
+  }
+  if (type === Fragment) {
+    return h(type, props, children);
+  } else if (typeof type !== "string") {
+    return h(type, props);
+  }
+  return h(type, props, children);
 }
 
 export default defineComponent({
@@ -60,7 +81,7 @@ export default defineComponent({
       const vueVnode = toJsxRuntime(tree, {
         components: componentsMap,
         Fragment,
-        jsx,
+        jsx: jsx,
         jsxs: jsx,
         passKeys: true,
         passNode: true,
