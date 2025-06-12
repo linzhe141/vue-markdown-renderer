@@ -1,5 +1,5 @@
 {
-  "name": "vue-markdown-renderer",
+  "name": "vue-mdr",
   "version": "0.0.0",
   "description": "Tranform markdown string to vue component with `mdast-> hast-> vue node`",
   "module": "./dist/src/index.js",
@@ -17,6 +17,7 @@
   "keywords": [
     "vue",
     "markdown",
+    "stream",
     "stream-markdown",
     "markdown to html",
     "markdown to vue"

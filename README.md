@@ -13,7 +13,7 @@ A Vue.js markdown component with enhanced features, utilizing efficient DOM rend
 ## Installation
 
 ```bash
-npm install vue-markdown-renderer
+npm install vue-mdr
 ```
 
 ## Usage
@@ -41,7 +41,7 @@ then use this animation
 
 ```vue
 <script setup>
-import { VueMarkdownRenderer } from "vue-markdown-renderer";
+import { VueMarkdownRenderer } from "vue-mdr";
 import { onMounted, ref } from "vue";
 // use this animation
 import "./animation.css";
