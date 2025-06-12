@@ -1,13 +1,7 @@
-import {
-  defineComponent,
-  h,
-  type PropType,
-  type VNode,
-  ref,
-  inject,
-} from "vue";
+import { defineComponent, h, type PropType, ref } from "vue";
 import type { Options } from "hast-util-to-jsx-runtime";
 import { ShikiCachedRenderer } from "shiki-stream/vue";
+import { langs, useShiki } from "./ShikiProvider";
 
 interface TextNode {
   type: "text";
@@ -23,11 +17,11 @@ interface ElementNode {
 
 type Node = TextNode | ElementNode;
 
-export const components = ["p", "h1", "h2", "h3", "li", "strong"] as const;
+const components = ["p", "h1", "h2", "h3", "li", "strong"] as const;
 
 type ComponentsMap = NonNullable<Options["components"]>;
 
-function wrap(node: Node): VNode | VNode[] {
+function wrap(node: Node) {
   if (node.type === "text") {
     const segmenter = new Intl.Segmenter("zh", { granularity: "word" });
     return [...segmenter.segment(node.value)].map((s, i) =>
@@ -37,7 +31,6 @@ function wrap(node: Node): VNode | VNode[] {
     const newChildren = node.children.map(wrap);
     return h(node.tagName, node.properties, newChildren);
   }
-  return h("span"); // 默认返回，避免 undefined
 }
 
 const SegmentTextImpl = defineComponent({
@@ -62,8 +55,10 @@ const Pre = defineComponent({
   },
   setup(props) {
     const codeChunk = ref("");
-    const highlighter = inject("highlighter") as any;
-    return () => {
+    const { highlighter } = useShiki();
+    function getCodeMeta() {
+      let language = "ts";
+      let code = "";
       const codeNode = props.node.children[0];
       if (
         codeNode &&
@@ -72,6 +67,15 @@ const Pre = defineComponent({
       ) {
         const codeTextNode = codeNode.children[0];
         if (codeTextNode.type === "text") {
+          const className = codeNode.properties.className as string[];
+          const languageClass = className.find((i) =>
+            i.includes("language")
+          ) as string;
+
+          let [_, languageName] = languageClass.split("-");
+
+          if (langs[languageName]) language = languageName;
+
           const lastChar = codeTextNode.value.at(-1);
           const codeText = codeTextNode.value.slice(
             0,
@@ -79,14 +83,27 @@ const Pre = defineComponent({
           );
           if (codeText.includes("`")) {
             console.log("todo handle `");
+            return {
+              language,
+              code,
+            };
           }
-          codeChunk.value = codeText;
+          code = codeText;
         }
       }
+      return {
+        language,
+        code,
+      };
+    }
+    return () => {
+      const { language, code } = getCodeMeta();
+      codeChunk.value = code;
+      if (!highlighter!.value) return null;
       return h(ShikiCachedRenderer, {
-        highlighter: highlighter.value,
+        highlighter: highlighter!.value,
         code: codeChunk.value,
-        lang: "js",
+        lang: language,
         theme: "light-plus",
       });
     };

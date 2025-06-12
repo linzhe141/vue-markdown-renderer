@@ -1,4 +1,4 @@
-import { h, defineComponent, PropType, onMounted, ref, provide } from "vue";
+import { h, defineComponent, type PropType } from "vue";
 import { Fragment } from "vue/jsx-runtime";
 import { toJsxRuntime } from "hast-util-to-jsx-runtime";
 import remarkParse from "remark-parse";
@@ -7,7 +7,7 @@ import remarkGfm from "remark-gfm";
 import { VFile } from "vfile";
 import { unified, type Plugin } from "unified";
 import { componentsMap } from "./segmentText";
-import { initShikiHighlighter } from "./shiki";
+import { ShikiProvider } from "./ShikiProvider";
 
 interface RemarkRehypeOptions {
   allowDangerousHtml?: boolean;
@@ -49,11 +49,6 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const highlighter = ref<any>(null);
-    provide("highlighter", highlighter);
-    onMounted(async () => {
-      highlighter.value = await initShikiHighlighter();
-    });
     const createProcessor = () => {
       const { rehypePlugins, remarkPlugins, remarkRehypeOptions } = props;
 
@@ -83,13 +78,15 @@ export default defineComponent({
       return vueVnode;
     };
 
+    const processor = createProcessor();
     return () => {
-      const processor = createProcessor();
       const file = createFile(props.md);
       const vnode = generateVueNode(
         processor.runSync(processor.parse(file), file)
       );
-      return vnode;
+      return h(ShikiProvider, null, {
+        default: () => vnode,
+      });
     };
   },
 });
