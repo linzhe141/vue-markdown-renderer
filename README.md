@@ -18,7 +18,10 @@ npm install vue-markdown-renderer
 
 ## Usage
 
+You can add css animations for `.text-segmenter` and `shiki-stream token` to improve user experience like LLM outputs.
+
 ```css
+/* animation.css */
 .vue-markdown-wrapper .text-segmenter,
 .vue-markdown-wrapper > * {
   animation: fade-in 0.5s ease-in-out;
@@ -34,10 +37,13 @@ npm install vue-markdown-renderer
 }
 ```
 
+then use this animation
+
 ```vue
 <script setup>
 import { VueMarkdownRenderer } from "vue-markdown-renderer";
 import { onMounted, ref } from "vue";
+// use this animation
 import "./animation.css";
 function createStream(text, chunkSize = 10, delay = 50) {
   let position = 0;

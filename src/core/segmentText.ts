@@ -1,4 +1,3 @@
-import type { Options } from "hast-util-to-jsx-runtime";
 import {
   defineComponent,
   h,
@@ -7,7 +6,9 @@ import {
   ref,
   inject,
 } from "vue";
+import type { Options } from "hast-util-to-jsx-runtime";
 import { ShikiCachedRenderer } from "shiki-stream/vue";
+
 interface TextNode {
   type: "text";
   value: string;
@@ -16,6 +17,7 @@ interface TextNode {
 interface ElementNode {
   type: "element";
   tagName: string;
+  properties: Record<string, any>;
   children: (TextNode | ElementNode)[];
 }
 
@@ -33,7 +35,7 @@ function wrap(node: Node): VNode | VNode[] {
     );
   } else if (node.type === "element" && Array.isArray(node.children)) {
     const newChildren = node.children.map(wrap);
-    return h(node.tagName, null, newChildren);
+    return h(node.tagName, node.properties, newChildren);
   }
   return h("span"); // 默认返回，避免 undefined
 }
@@ -91,30 +93,30 @@ const Pre = defineComponent({
   },
 });
 
-export const componentsMap = components.reduce((res, key) => {
-  const item = {} as ComponentsMap;
-  item[key] = defineComponent({
-    name: key + "-wrapper",
-    props: {
-      node: {
-        type: Object as PropType<ElementNode>,
-        required: true,
+export const componentsMap = components.reduce(
+  (res, key) => {
+    const item = {} as ComponentsMap;
+    item[key] = defineComponent({
+      name: key + "-wrapper",
+      props: {
+        node: {
+          type: Object as PropType<ElementNode>,
+          required: true,
+        },
       },
-    },
-    setup(props) {
-      return () => {
-        return h(
-          key,
-          null,
-          props.node.children.map((child) =>
-            h(SegmentTextImpl, { node: child })
-          )
-        );
-      };
-    },
-  });
-  return Object.assign(res, item);
-}, {} as ComponentsMap);
-Object.assign(componentsMap, {
-  pre: Pre,
-});
+      setup(props) {
+        return () => {
+          return h(
+            key,
+            null,
+            props.node.children.map((child) =>
+              h(SegmentTextImpl, { node: child })
+            )
+          );
+        };
+      },
+    });
+    return Object.assign(res, item);
+  },
+  { pre: Pre } as ComponentsMap
+);

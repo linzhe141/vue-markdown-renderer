@@ -41,6 +41,7 @@
     "@shikijs/langs": "^3.6.0",
     "@shikijs/themes": "^3.6.0",
     "hast-util-to-jsx-runtime": "^2.3.6",
+    "remark-gfm": "^4.0.1",
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.2",
     "shiki": "^3.6.0",

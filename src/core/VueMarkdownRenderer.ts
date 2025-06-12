@@ -1,21 +1,14 @@
-import {
-  h,
-  defineComponent,
-  PropType,
-  onMounted,
-  ref,
-  provide,
-  type Component,
-} from "vue";
+import { h, defineComponent, PropType, onMounted, ref, provide } from "vue";
 import { Fragment } from "vue/jsx-runtime";
 import { toJsxRuntime } from "hast-util-to-jsx-runtime";
 import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
-import { unified } from "unified";
+import remarkGfm from "remark-gfm";
 import { VFile } from "vfile";
-import { Plugin } from "unified";
+import { unified, type Plugin } from "unified";
 import { componentsMap } from "./segmentText";
 import { initShikiHighlighter } from "./shiki";
+
 interface RemarkRehypeOptions {
   allowDangerousHtml?: boolean;
   [key: string]: any;
@@ -66,6 +59,7 @@ export default defineComponent({
 
       return unified()
         .use(remarkParse)
+        .use(remarkGfm)
         .use(remarkPlugins)
         .use(remarkRehype, remarkRehypeOptions)
         .use(rehypePlugins);

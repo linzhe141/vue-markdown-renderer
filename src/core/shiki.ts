@@ -23,11 +23,3 @@ export async function initShikiHighlighter() {
   highlighter = _highlighter as Highlighter;
   return highlighter;
 }
-
-export function codeToHtml(input: string, lang: string) {
-  const html = highlighter!.codeToHtml(input, {
-    lang,
-    theme: "nord",
-  });
-  return html;
-}
