@@ -1,7 +1,8 @@
 # VueMarkdownRenderer
 
-A Vue.js markdown editor component with enhanced features, utilizing efficient DOM rendering through Vue's virtual DOM.
+A Vue.js markdown component with enhanced features, utilizing efficient DOM rendering through Vue's virtual DOM.
 
+[live demo](https://linzhe141.github.io/vue-markdown-renderer/)
 ## Features
 
 - Vue-powered rendering engine for optimal DOM updates

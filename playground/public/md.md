@@ -1,6 +1,10 @@
 # VueMarkdownRenderer
 
-A Vue.js markdown editor component with enhanced features, utilizing efficient DOM rendering through Vue's virtual DOM.
+A Vue.js markdown component with enhanced features, utilizing efficient DOM rendering through Vue's virtual DOM.
+
+## TODO
+
+- link with url
 
 ## Features
 
@@ -16,7 +20,7 @@ npm install vue-markdown-renderer
 
 ## Usage
 
-```css
+````css
 .vue-markdown-wrapper .text-segmenter,
 .vue-markdown-wrapper > * {
   animation: fade-in 0.5s ease-in-out;
@@ -30,7 +34,8 @@ npm install vue-markdown-renderer
     opacity: 1;
   }
 }
-```
+
+``
 
 ```vue
 <script setup>
@@ -84,4 +89,4 @@ onMounted(clickHandle);
     </article>
   </div>
 </template>
-```
+````
