@@ -3,6 +3,7 @@
 A Vue.js markdown component with enhanced features, utilizing efficient DOM rendering through Vue's virtual DOM.
 
 [live demo](https://linzhe141.github.io/vue-markdown-renderer/)
+
 ## Features
 
 - Vue-powered rendering engine for optimal DOM updates
@@ -17,7 +18,7 @@ npm install vue-markdown-renderer
 
 ## Usage
 
-````css
+```css
 .vue-markdown-wrapper .text-segmenter,
 .vue-markdown-wrapper > * {
   animation: fade-in 0.5s ease-in-out;
@@ -31,8 +32,7 @@ npm install vue-markdown-renderer
     opacity: 1;
   }
 }
-
-``
+```
 
 ```vue
 <script setup>
@@ -86,4 +86,4 @@ onMounted(clickHandle);
     </article>
   </div>
 </template>
-````
+```

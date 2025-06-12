@@ -20,7 +20,7 @@ npm install vue-markdown-renderer
 
 ## Usage
 
-````css
+```css
 .vue-markdown-wrapper .text-segmenter,
 .vue-markdown-wrapper > * {
   animation: fade-in 0.5s ease-in-out;
@@ -34,8 +34,7 @@ npm install vue-markdown-renderer
     opacity: 1;
   }
 }
-
-``
+```
 
 ```vue
 <script setup>
@@ -89,4 +88,4 @@ onMounted(clickHandle);
     </article>
   </div>
 </template>
-````
+```
