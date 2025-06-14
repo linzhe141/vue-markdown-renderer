@@ -1,4 +1,4 @@
-import { h, defineComponent, type PropType } from "vue";
+import { h, defineComponent, type PropType, provide, computed } from "vue";
 import { Fragment } from "vue/jsx-runtime";
 import { toJsxRuntime } from "hast-util-to-jsx-runtime";
 import remarkParse from "remark-parse";
@@ -8,6 +8,7 @@ import { VFile } from "vfile";
 import { unified, type Plugin } from "unified";
 import { componentsMap } from "./segmentText";
 import { ShikiProvider } from "./ShikiProvider";
+import { configKey } from "./symbol";
 
 interface RemarkRehypeOptions {
   allowDangerousHtml?: boolean;
@@ -33,6 +34,10 @@ export default defineComponent({
   props: {
     md: {
       type: String as PropType<string>,
+      required: true,
+    },
+    theme: {
+      type: String as PropType<"light" | "dark">,
       required: true,
     },
     rehypePlugins: {
@@ -77,7 +82,10 @@ export default defineComponent({
       });
       return vueVnode;
     };
-
+    const computedProps = computed(() => ({
+      theme: props.theme,
+    }));
+    provide(configKey, computedProps);
     const processor = createProcessor();
     return () => {
       const file = createFile(props.md);

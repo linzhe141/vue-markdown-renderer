@@ -1,7 +1,10 @@
-import { defineComponent, h, type PropType, ref } from "vue";
+import { computed, defineComponent, h, inject, type PropType, ref } from "vue";
 import type { Options } from "hast-util-to-jsx-runtime";
 import { ShikiCachedRenderer } from "shiki-stream/vue";
-import { langs, useShiki } from "./ShikiProvider";
+import { useShiki } from "./ShikiProvider";
+import { supportLangs } from "./highlight/shiki";
+import { THEME } from "./highlight/codeTheme";
+import { configKey } from "./symbol";
 
 interface TextNode {
   type: "text";
@@ -74,7 +77,7 @@ const Pre = defineComponent({
 
           let [_, languageName] = languageClass.split("-");
 
-          if (langs[languageName]) language = languageName;
+          if (supportLangs[languageName]) language = languageName;
 
           const lastChar = codeTextNode.value.at(-1);
           const codeText = codeTextNode.value.slice(
@@ -96,6 +99,12 @@ const Pre = defineComponent({
         code,
       };
     }
+    const config = inject(configKey);
+    const themeStyle = computed(() => {
+      debugger;
+      const theme = config!.value.theme;
+      return THEME[theme];
+    });
     return () => {
       const { language, code } = getCodeMeta();
       codeChunk.value = code;
@@ -104,7 +113,8 @@ const Pre = defineComponent({
         highlighter: highlighter!.value,
         code: codeChunk.value,
         lang: language,
-        theme: "light-plus",
+        theme: "css-variables",
+        style: { ...themeStyle.value, background: "var(--ray-background)" },
       });
     };
   },

@@ -38,6 +38,7 @@
     "vitest": "^3.0.7"
   },
   "dependencies": {
+    "@shikijs/core": "^3.6.0",
     "@shikijs/langs": "^3.6.0",
     "@shikijs/themes": "^3.6.0",
     "hast-util-to-jsx-runtime": "^2.3.6",

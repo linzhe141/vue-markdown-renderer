@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@shikijs/core':
+        specifier: ^3.6.0
+        version: 3.6.0
       '@shikijs/langs':
         specifier: ^3.6.0
         version: 3.6.0
