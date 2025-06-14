@@ -9,6 +9,7 @@ A Vue.js markdown component with enhanced features, utilizing efficient DOM rend
 - Vue-powered rendering engine for optimal DOM updates
 - Syntax highlighting power by shiki
 - Seamless Vue.js integration
+- Vercel theme code blocks support dark and light mode
 
 ## Installation
 
@@ -36,17 +37,17 @@ You can add css animations for `.text-segmenter` and `shiki-stream token` to imp
     opacity: 1;
   }
 }
-
 ```
 
-then use this animation
+then use this animation, And you can also use @tailwindcss/typography, or other typography tools to beautify the page.
 
 ```vue
 <script setup>
-import { VueMarkdownRenderer } from "vue-mdr";
+import { VueMarkdownRenderer } from "../../src";
 import { onMounted, ref } from "vue";
-// use this animation
 import "./animation.css";
+import Button from "./Button.vue";
+
 function createStream(text, chunkSize = 10, delay = 50) {
   let position = 0;
 
@@ -84,13 +85,39 @@ async function clickHandle() {
   isRender.value = false;
 }
 onMounted(clickHandle);
+
+const switchTheme = ref("dark");
+function changeTheme() {
+  if (switchTheme.value === "dark") {
+    document.documentElement.classList.add("dark");
+  } else {
+    document.documentElement.classList.remove("dark");
+  }
+  switchTheme.value = switchTheme.value === "dark" ? "light" : "dark";
+}
 </script>
 
 <template>
   <div>
-    <button @click="clickHandle" :disabled="isRender">re-grenerate ~</button>
-    <article class="vue-markdown-wrapper">
-      <VueMarkdownRenderer :md="mdText"></VueMarkdownRenderer>
+    <div
+      style="
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+      "
+      class="p-2"
+    >
+      <Button @click="clickHandle" :disabled="isRender">re-grenerate ~</Button>
+      <Button @click="changeTheme">change theme to {{ switchTheme }}</Button>
+    </div>
+    <article
+      class="vue-markdown-wrapper prose prose-slate dark:prose-invert mx-auto my-10"
+    >
+      <VueMarkdownRenderer
+        :md="mdText"
+        :theme="switchTheme === 'dark' ? 'light' : 'dark'"
+      ></VueMarkdownRenderer>
     </article>
   </div>
 </template>
