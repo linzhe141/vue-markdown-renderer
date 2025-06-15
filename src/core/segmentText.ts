@@ -106,6 +106,7 @@ const Pre = defineComponent({
     });
     return () => {
       const { language, code } = getCodeMeta();
+      if (code === "") return null;
       codeChunk.value = code;
       if (!highlighter!.value) return null;
       return h(ShikiCachedRenderer, {
