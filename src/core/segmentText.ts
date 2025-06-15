@@ -71,27 +71,30 @@ const Pre = defineComponent({
         const codeTextNode = codeNode.children[0];
         if (codeTextNode.type === "text") {
           const className = codeNode.properties.className as string[];
-          const languageClass = className.find((i) =>
-            i.includes("language")
-          ) as string;
+          if (className) {
+            const languageClass = className.find((i) =>
+              i.includes("language")
+            ) as string;
 
-          let [_, languageName] = languageClass.split("-");
+            let [_, languageName] = languageClass.split("-");
 
-          if (supportLangs[languageName]) language = languageName;
+            if (supportLangs[languageName]) language = languageName;
+          }
 
           const lastChar = codeTextNode.value.at(-1);
           const codeText = codeTextNode.value.slice(
             0,
             codeTextNode.value.length - (lastChar === "\n" ? 1 : 0)
           );
-          if (codeText.includes("`")) {
-            console.log("todo handle `");
-            return {
-              language,
-              code,
-            };
+          const lines = codeText.split("\n");
+          const lastLine = lines.at(-1);
+          if (lastLine && lastLine.startsWith("`")) {
+            // 当最后一行存在``,先忽略掉最后一行的，如果还存在后续代码，这一行代码会正常更新到代码块中，
+            // 否则这就是最后一行的代码块的结束标识
+            code = lines.slice(0, lines.length - 1).join("\n");
+          } else {
+            code = codeText;
           }
-          code = codeText;
         }
       }
       return {
