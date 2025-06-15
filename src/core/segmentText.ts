@@ -101,7 +101,6 @@ const Pre = defineComponent({
     }
     const config = inject(configKey);
     const themeStyle = computed(() => {
-      debugger;
       const theme = config!.value.theme;
       return THEME[theme];
     });
