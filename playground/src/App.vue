@@ -86,7 +86,7 @@ function changeTheme() {
       class="vue-markdown-wrapper prose prose-slate dark:prose-invert mx-auto my-10"
     >
       <VueMarkdownRenderer
-        :md="mdText"
+        :source="mdText"
         :theme="switchTheme === 'dark' ? 'light' : 'dark'"
       ></VueMarkdownRenderer>
     </article>

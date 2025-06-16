@@ -32,7 +32,7 @@ function jsx(type: any, props: Record<any, any>, key: any) {
 export default defineComponent({
   name: "VueMarkdownRenderer",
   props: {
-    md: {
+    source: {
       type: String as PropType<string>,
       required: true,
     },
@@ -88,7 +88,7 @@ export default defineComponent({
     provide(configKey, computedProps);
     const processor = createProcessor();
     return () => {
-      const file = createFile(props.md);
+      const file = createFile(props.source);
       const vnode = generateVueNode(
         processor.runSync(processor.parse(file), file)
       );
