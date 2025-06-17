@@ -84,7 +84,7 @@ function changeTheme() {
       <Button @click="changeTheme">change theme to {{ switchTheme }}</Button>
     </div>
     <article
-      class="vue-markdown-wrapper 1prose prose-slate dark:prose-invert mx-auto my-10"
+      class="vue-markdown-wrapper prose prose-slate dark:prose-invert mx-auto my-10"
     >
       <VueMarkdownRenderer
         :source="mdText"
