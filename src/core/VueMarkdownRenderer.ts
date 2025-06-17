@@ -9,6 +9,7 @@ import { unified, type Plugin } from "unified";
 import { componentsMap } from "./segmentText";
 import { ShikiProvider } from "./ShikiProvider";
 import { configKey } from "./symbol";
+import { Langs } from "./highlight/shiki";
 
 interface RemarkRehypeOptions {
   allowDangerousHtml?: boolean;
@@ -39,6 +40,10 @@ export default defineComponent({
     theme: {
       type: String as PropType<"light" | "dark">,
       required: true,
+    },
+    extraLangs: {
+      type: Array as PropType<Langs[]>,
+      default: () => [],
     },
     rehypePlugins: {
       type: Array as PropType<Plugin[]>,
@@ -84,6 +89,7 @@ export default defineComponent({
     };
     const computedProps = computed(() => ({
       theme: props.theme,
+      extraLangs: props.extraLangs,
     }));
     provide(configKey, computedProps);
     const processor = createProcessor();

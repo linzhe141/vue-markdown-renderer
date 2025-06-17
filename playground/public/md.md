@@ -47,6 +47,8 @@ import { VueMarkdownRenderer } from "../../src";
 import { onMounted, ref } from "vue";
 import "./animation.css";
 import Button from "./Button.vue";
+// add extrl lang for code block
+import java from "@shikijs/langs/java";
 
 function createStream(text, chunkSize = 10, delay = 50) {
   let position = 0;
@@ -109,6 +111,7 @@ function changeTheme() {
       class="p-2"
     >
       <Button @click="clickHandle" :disabled="isRender">re-grenerate ~</Button>
+
       <Button @click="changeTheme">change theme to {{ switchTheme }}</Button>
     </div>
     <article
@@ -116,9 +119,20 @@ function changeTheme() {
     >
       <VueMarkdownRenderer
         :source="mdText"
+        :extra-langs="[java]"
         :theme="switchTheme === 'dark' ? 'light' : 'dark'"
       ></VueMarkdownRenderer>
     </article>
   </div>
 </template>
+```
+
+test for extra lang `java`
+
+```java
+public class HelloWorld {
+    public static void main(String[] args) {
+        System.out.println("Hello, world!");
+    }
+}
 ```

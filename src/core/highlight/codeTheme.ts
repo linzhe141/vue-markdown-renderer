@@ -12,7 +12,7 @@ export type Font = (typeof FONTS)[number];
 
 export const shikiTheme = createCssVariablesTheme({
   name: "css-variables",
-  variablePrefix: "--ray-",
+  variablePrefix: "--vercel-code-block-",
   variableDefaults: {},
   fontStyle: true,
 });
@@ -44,29 +44,30 @@ function convertToShikiTheme(syntaxObject: ShikiSyntaxObject): CSSProperties {
   }
 
   return {
-    '--ray-background': syntaxObject.background,
-    "--ray-foreground": syntaxObject.foreground,
-    "--ray-token-constant": syntaxObject.constant,
-    "--ray-token-string": syntaxObject.string,
-    "--ray-token-comment": syntaxObject.comment,
-    "--ray-token-keyword": syntaxObject.keyword,
-    "--ray-token-parameter": syntaxObject.parameter,
-    "--ray-token-function": syntaxObject.function,
-    "--ray-token-string-expression": syntaxObject.stringExpression,
-    "--ray-token-punctuation": syntaxObject.punctuation,
-    "--ray-token-link": syntaxObject.link,
-    "--ray-token-number": syntaxObject.number,
-    "--ray-token-property": syntaxObject.property,
-    "--ray-highlight": syntaxObject.highlight,
-    "--ray-highlight-border": syntaxObject.highlightBorder,
-    "--ray-highlight-hover": syntaxObject.highlightHover,
+    "--vercel-code-block-background": syntaxObject.background,
+    "--vercel-code-block-foreground": syntaxObject.foreground,
+    "--vercel-code-block-token-constant": syntaxObject.constant,
+    "--vercel-code-block-token-string": syntaxObject.string,
+    "--vercel-code-block-token-comment": syntaxObject.comment,
+    "--vercel-code-block-token-keyword": syntaxObject.keyword,
+    "--vercel-code-block-token-parameter": syntaxObject.parameter,
+    "--vercel-code-block-token-function": syntaxObject.function,
+    "--vercel-code-block-token-string-expression":
+      syntaxObject.stringExpression,
+    "--vercel-code-block-token-punctuation": syntaxObject.punctuation,
+    "--vercel-code-block-token-link": syntaxObject.link,
+    "--vercel-code-block-token-number": syntaxObject.number,
+    "--vercel-code-block-token-property": syntaxObject.property,
+    "--vercel-code-block-highlight": syntaxObject.highlight,
+    "--vercel-code-block-highlight-border": syntaxObject.highlightBorder,
+    "--vercel-code-block-highlight-hover": syntaxObject.highlightHover,
   } as CSSProperties;
 }
 
 export const THEME = {
   //TODO: 暂不使用light 主题
   light: convertToShikiTheme({
-    background: 'hsla(0, 0%, 93%,1)',
+    background: "hsla(0, 0%, 93%,1)",
     foreground: "hsla(0, 0%, 9%,1)",
     constant: "oklch(53.18% 0.2399 256.9900584162342)",
     string: "oklch(51.75% 0.1453 147.65)",
@@ -84,7 +85,7 @@ export const THEME = {
     highlightBorder: "oklch(53.18% 0.2399 256.9900584162342)",
   }),
   dark: convertToShikiTheme({
-    background: 'hsla(0, 0%, 9%,1)',
+    background: "hsla(0, 0%, 9%,1)",
     foreground: "hsla(0, 0%, 93%,1)",
     constant: "oklch(71.7% 0.1648 250.79360374054167)",
     string: "oklch(73.1% 0.2158 148.29)",

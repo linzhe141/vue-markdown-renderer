@@ -6,7 +6,8 @@ import {
 import { shikiTheme } from "./codeTheme";
 let highlighter: Highlighter | null = null;
 
-export const supportLangs = {
+export type Langs = Parameters<Highlighter["loadLanguage"]>[0];
+export const defaultLangs = {
   json: import("@shikijs/langs/json"),
   bash: import("@shikijs/langs/bash"),
   vue: import("@shikijs/langs/vue"),
@@ -23,7 +24,7 @@ export async function initShikiHighlighter() {
   if (highlighter) return highlighter;
   const _highlighter = await createHighlighterCore({
     themes: [shikiTheme],
-    langs: Object.values(supportLangs),
+    langs: Object.values(defaultLangs),
     engine: createOnigurumaEngine(() => import("shiki/wasm")),
   });
   highlighter = _highlighter as Highlighter;

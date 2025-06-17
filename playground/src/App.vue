@@ -3,6 +3,7 @@ import { VueMarkdownRenderer } from "../../src";
 import { onMounted, ref } from "vue";
 import "./animation.css";
 import Button from "./Button.vue";
+import java from "@shikijs/langs/java";
 
 function createStream(text, chunkSize = 10, delay = 50) {
   let position = 0;
@@ -83,10 +84,11 @@ function changeTheme() {
       <Button @click="changeTheme">change theme to {{ switchTheme }}</Button>
     </div>
     <article
-      class="vue-markdown-wrapper prose prose-slate dark:prose-invert mx-auto my-10"
+      class="vue-markdown-wrapper 1prose prose-slate dark:prose-invert mx-auto my-10"
     >
       <VueMarkdownRenderer
         :source="mdText"
+        :extra-langs="[java]"
         :theme="switchTheme === 'dark' ? 'light' : 'dark'"
       ></VueMarkdownRenderer>
     </article>

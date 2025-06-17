@@ -2,7 +2,7 @@ import { computed, defineComponent, h, inject, type PropType, ref } from "vue";
 import type { Options } from "hast-util-to-jsx-runtime";
 import { ShikiCachedRenderer } from "shiki-stream/vue";
 import { useShiki } from "./ShikiProvider";
-import { supportLangs } from "./highlight/shiki";
+import { defaultLangs } from "./highlight/shiki";
 import { THEME } from "./highlight/codeTheme";
 import { configKey } from "./symbol";
 
@@ -59,8 +59,10 @@ const Pre = defineComponent({
   setup(props) {
     const codeChunk = ref("");
     const { highlighter } = useShiki();
+    const fallbackLang = "ts";
     function getCodeMeta() {
-      let language = "ts";
+      const loadedLangs = highlighter!.value!.getLoadedLanguages();
+      let language = fallbackLang;
       let code = "";
       const codeNode = props.node.children[0];
       if (
@@ -78,7 +80,7 @@ const Pre = defineComponent({
 
             let [_, languageName] = languageClass.split("-");
 
-            if (supportLangs[languageName]) language = languageName;
+            if (loadedLangs.includes(languageName)) language = languageName;
           }
 
           const lastChar = codeTextNode.value.at(-1);
@@ -108,16 +110,19 @@ const Pre = defineComponent({
       return THEME[theme];
     });
     return () => {
+      if (!highlighter!.value) return null;
       const { language, code } = getCodeMeta();
       if (code === "") return null;
       codeChunk.value = code;
-      if (!highlighter!.value) return null;
       return h(ShikiCachedRenderer, {
         highlighter: highlighter!.value,
         code: codeChunk.value,
-        lang: language,
+        lang: language === fallbackLang ? "ts" : language,
         theme: "css-variables",
-        style: { ...themeStyle.value, background: "var(--ray-background)" },
+        style: {
+          ...themeStyle.value,
+          background: "var(--vercel-code-block-background)",
+        },
       });
     };
   },
