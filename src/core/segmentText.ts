@@ -2,7 +2,6 @@ import { computed, defineComponent, h, inject, type PropType, ref } from "vue";
 import type { Options } from "hast-util-to-jsx-runtime";
 import { ShikiCachedRenderer } from "shiki-stream/vue";
 import { useShiki } from "./ShikiProvider";
-import { defaultLangs } from "./highlight/shiki";
 import { THEME } from "./highlight/codeTheme";
 import { configKey } from "./symbol";
 
@@ -79,8 +78,7 @@ const Pre = defineComponent({
             ) as string;
 
             let [_, languageName] = languageClass.split("-");
-
-            if (loadedLangs.includes(languageName)) language = languageName;
+            language = languageName;
           }
 
           const lastChar = codeTextNode.value.at(-1);
@@ -90,15 +88,32 @@ const Pre = defineComponent({
           );
           const lines = codeText.split("\n");
           const lastLine = lines.at(-1);
-          if (lastLine && lastLine.startsWith("`")) {
-            // 当最后一行存在``,先忽略掉最后一行的，如果还存在后续代码，这一行代码会正常更新到代码块中，
-            // 否则这就是最后一行的代码块的结束标识
-            code = lines.slice(0, lines.length - 1).join("\n");
+
+          let matchedMarkdownCount = 0;
+          if (language === "markdown") {
+            lines.forEach((line) => {
+              const trimStartLine = line.trimStart();
+              if (trimStartLine.startsWith("```")) {
+                matchedMarkdownCount++;
+              }
+            });
+            if (
+              lastLine &&
+              lastLine.trimStart().startsWith("```") &&
+              matchedMarkdownCount % 2 === 0
+            ) {
+              code = codeText;
+            }
           } else {
-            code = codeText;
+            if (lastLine && lastLine.trimStart().startsWith("`")) {
+              code = lines.slice(0, lines.length - 1).join("\n");
+            } else {
+              code = codeText;
+            }
           }
         }
       }
+      if (!loadedLangs.includes(language)) language = fallbackLang;
       return {
         language,
         code,
@@ -117,7 +132,7 @@ const Pre = defineComponent({
       return h(ShikiCachedRenderer, {
         highlighter: highlighter!.value,
         code: codeChunk.value,
-        lang: language === fallbackLang ? "ts" : language,
+        lang: language === fallbackLang ? fallbackLang : language,
         theme: "css-variables",
         style: {
           ...themeStyle.value,

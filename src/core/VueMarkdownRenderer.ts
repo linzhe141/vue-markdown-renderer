@@ -1,4 +1,11 @@
-import { h, defineComponent, type PropType, provide, computed } from "vue";
+import {
+  h,
+  defineComponent,
+  type PropType,
+  provide,
+  computed,
+  type Component,
+} from "vue";
 import { Fragment } from "vue/jsx-runtime";
 import { toJsxRuntime } from "hast-util-to-jsx-runtime";
 import remarkParse from "remark-parse";
@@ -8,12 +15,11 @@ import { VFile } from "vfile";
 import { unified, type Plugin } from "unified";
 import { componentsMap } from "./segmentText";
 import { ShikiProvider } from "./ShikiProvider";
-import { configKey } from "./symbol";
+import { componentsMapKey, configKey } from "./symbol";
 import { Langs } from "./highlight/shiki";
 import {
   remarkComponentBlock,
-  Component,
-  Test,
+  ComponentCodeBlock,
 } from "./plugin/compoentCodeBlock";
 
 interface RemarkRehypeOptions {
@@ -38,6 +44,9 @@ function jsx(type: any, props: Record<any, any>, key: any) {
 export default defineComponent({
   name: "VueMarkdownRenderer",
   props: {
+    componentsMap: {
+      type: Object as PropType<Record<string, Component>>,
+    },
     source: {
       type: String as PropType<string>,
       required: true,
@@ -86,7 +95,7 @@ export default defineComponent({
       const vueVnode = toJsxRuntime(tree, {
         components: {
           ...componentsMap,
-          ComponentBlock: Component,
+          ComponentCodeBlock,
         },
         Fragment,
         jsx: jsx,
@@ -101,6 +110,7 @@ export default defineComponent({
       extraLangs: props.extraLangs,
     }));
     provide(configKey, computedProps);
+    provide(componentsMapKey, props.componentsMap || {});
     const processor = createProcessor();
     return () => {
       const file = createFile(props.source);

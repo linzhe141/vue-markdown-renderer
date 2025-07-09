@@ -7,7 +7,9 @@ import java from "@shikijs/langs/java";
 import "katex/dist/katex.min.css";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
-function createStream(text, chunkSize = 10, delay = 50) {
+import BarChart from "./BarChart.vue";
+
+function createStream(text, chunkSize = 15, delay = 50) {
   let position = 0;
 
   return new ReadableStream({
@@ -111,6 +113,9 @@ function changeTheme() {
         :theme="switchTheme === 'dark' ? 'light' : 'dark'"
         :remark-plugins="[remarkMath]"
         :rehype-plugins="[rehypeKatex]"
+        :components-map="{
+          BarChart,
+        }"
       ></VueMarkdownRenderer>
     </article>
   </div>
