@@ -17,6 +17,12 @@ A Vue.js markdown component with enhanced features, utilizing efficient DOM rend
 npm install vue-mdr
 ```
 
+## 支持使用`component-json`代码块渲染vue组件
+
+```component-json
+{"type":"BarChart",  "props": {"chartData": { "categories": ["type1", "type2", "type3"], "seriesData": [100, 200, 150] }}}
+```
+
 ## Usage
 
 You can add css animations for `.text-segmenter` and `shiki-stream token` to improve user experience like LLM outputs.

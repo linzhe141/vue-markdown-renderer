@@ -10,6 +10,11 @@ import { componentsMap } from "./segmentText";
 import { ShikiProvider } from "./ShikiProvider";
 import { configKey } from "./symbol";
 import { Langs } from "./highlight/shiki";
+import {
+  remarkComponentBlock,
+  Component,
+  Test,
+} from "./plugin/compoentCodeBlock";
 
 interface RemarkRehypeOptions {
   allowDangerousHtml?: boolean;
@@ -65,6 +70,7 @@ export default defineComponent({
       return unified()
         .use(remarkParse)
         .use(remarkGfm)
+        .use(remarkComponentBlock)
         .use(remarkPlugins)
         .use(remarkRehype, remarkRehypeOptions)
         .use(rehypePlugins);
@@ -78,7 +84,10 @@ export default defineComponent({
 
     const generateVueNode = (tree: any) => {
       const vueVnode = toJsxRuntime(tree, {
-        components: componentsMap,
+        components: {
+          ...componentsMap,
+          ComponentBlock: Component,
+        },
         Fragment,
         jsx: jsx,
         jsxs: jsx,
