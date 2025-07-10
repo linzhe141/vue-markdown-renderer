@@ -7,6 +7,7 @@ export const remarkComponentCodeBlock = () => {
     visit(tree, "code", (node, index, parent) => {
       if (node.lang === "component-json") {
         if (!node.meta) {
+          // 默认的placeholder
           const placeholder = {
             type: "ComponentCodeBlock",
             data: {
@@ -16,7 +17,6 @@ export const remarkComponentCodeBlock = () => {
               },
             },
           };
-          debugger;
           parent.children.splice(index, 1, placeholder);
         }
         try {
