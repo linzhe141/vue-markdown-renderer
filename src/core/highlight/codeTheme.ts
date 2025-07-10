@@ -65,7 +65,6 @@ function convertToShikiTheme(syntaxObject: ShikiSyntaxObject): CSSProperties {
 }
 
 export const THEME = {
-  //TODO: 暂不使用light 主题
   light: convertToShikiTheme({
     background: "hsla(0, 0%, 93%,1)",
     foreground: "hsla(0, 0%, 9%,1)",

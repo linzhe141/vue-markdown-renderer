@@ -18,9 +18,9 @@ import { ShikiProvider } from "./ShikiProvider";
 import { componentsMapKey, configKey } from "./symbol";
 import { Langs } from "./highlight/shiki";
 import {
-  remarkComponentBlock,
+  remarkComponentCodeBlock,
   ComponentCodeBlock,
-} from "./plugin/compoentCodeBlock";
+} from "./plugin/remarkComponentCodeBlock";
 
 interface RemarkRehypeOptions {
   allowDangerousHtml?: boolean;
@@ -79,7 +79,7 @@ export default defineComponent({
       return unified()
         .use(remarkParse)
         .use(remarkGfm)
-        .use(remarkComponentBlock)
+        .use(remarkComponentCodeBlock)
         .use(remarkPlugins)
         .use(remarkRehype, remarkRehypeOptions)
         .use(rehypePlugins);

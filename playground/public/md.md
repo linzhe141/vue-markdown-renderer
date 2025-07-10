@@ -148,18 +148,24 @@ function changeTheme() {
 
 Supports rendering custom Vue components through component-json code blocks. Each code block should contain a JSON object with the following structure:
 
-- type: the key in componentsMap that corresponds to a registered Vue component
+- type: The key in componentsMap that corresponds to a registered Vue component.
 
-- props: an object containing the props to be passed to that component
+- props: An object containing the props to be passed to that component.
+
+Additionally, the code block's meta information can include:
+
+- placeholder (optional): Specifies a placeholder Vue component to render before the JSON content is fully parsed. For example: {"placeholder": "LoadingSkeleton"}.
+
+If no placeholder is specified, a default fallback will be rendered `h("div", { class: "vue-mdr-default-component-placeholder" })`.
 
 ````markdown
-```component-json
-{"type":"BarChart",  "props": {"chartData": { "categories": ["type1", "type2", "type3"], "seriesData": [100, 200, 150] }}}
+```component-json {"placeholder": "Placeholder"}
+{"type":"BarChart", "props": {"chartData": { "categories": ["type1", "type2", "type3"], "seriesData": [100, 200, 150] }}}
 ```
 ````
 
-```component-json
-{"type":"BarChart",  "props": {"chartData": { "categories": ["type1", "type2", "type3"], "seriesData": [100, 200, 150] }}}
+```component-json {"placeholder": "Placeholder"}
+{"type":"BarChart", "props": {"chartData": { "categories": ["type1", "type2", "type3"], "seriesData": [100, 200, 150] }}}
 ```
 
 test for extra lang `java`

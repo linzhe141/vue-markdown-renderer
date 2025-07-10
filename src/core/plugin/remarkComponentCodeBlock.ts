@@ -1,38 +1,49 @@
 import { visit } from "unist-util-visit";
 import { defineComponent, h, inject } from "vue";
-import Placeholder from "./placeholder.vue";
 import { componentsMapKey } from "../symbol";
 
-export const remarkComponentBlock = () => {
+export const remarkComponentCodeBlock = () => {
   return (tree) => {
     visit(tree, "code", (node, index, parent) => {
       if (node.lang === "component-json") {
-        try {
-          const data = JSON.parse(node.value);
-          const componentCodeBlock = {
+        if (!node.meta) {
+          const placeholder = {
             type: "ComponentCodeBlock",
             data: {
               hName: "ComponentCodeBlock",
-              hProperties: data,
+              hProperties: {
+                placeholder: "vue-mdr-default-component-placeholder-key",
+              },
             },
           };
-          if (parent && typeof index === "number") {
+          debugger;
+          parent.children.splice(index, 1, placeholder);
+        }
+        try {
+          const meta = JSON.parse(node.meta);
+          try {
+            const data = JSON.parse(node.value);
+            const componentCodeBlock = {
+              type: "ComponentCodeBlock",
+              data: {
+                hName: "ComponentCodeBlock",
+                hProperties: data,
+              },
+            };
             parent.children.splice(index, 1, componentCodeBlock);
-          }
-        } catch (e) {
-          if (parent && typeof index === "number") {
+          } catch (e) {
             const placeholder = {
               type: "ComponentCodeBlock",
               data: {
                 hName: "ComponentCodeBlock",
                 hProperties: {
-                  loading: true,
+                  placeholder: meta.placeholder,
                 },
               },
             };
             parent.children.splice(index, 1, placeholder);
           }
-        }
+        } catch (e) {}
       }
     });
   };
@@ -44,6 +55,14 @@ const ComponentWrapper = defineComponent({
   setup(props) {
     return () => {
       return h(props.component, JSON.parse(props.componetPropsJson));
+    };
+  },
+});
+
+const Placeholder = defineComponent({
+  setup() {
+    return () => {
+      return h("div", { class: "vue-mdr-default-component-placeholder" });
     };
   },
 });
@@ -60,12 +79,12 @@ export const ComponentCodeBlock = defineComponent({
   },
   setup(props) {
     return () => {
-      const node = props.node;
-      const isLoading = node.properties.loading;
-      if (isLoading) {
-        return h(Placeholder);
-      }
       const componentsMap = inject(componentsMapKey)!;
+      const node = props.node;
+      const placeholder = node.properties.placeholder;
+      if (placeholder) {
+        return h(componentsMap[placeholder] || Placeholder);
+      }
       const component = componentsMap[node.properties.type];
       const componentProps = node.properties.props;
       return h(ComponentWrapper, {

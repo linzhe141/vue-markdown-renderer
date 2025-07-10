@@ -8,6 +8,7 @@ import "katex/dist/katex.min.css";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import BarChart from "./BarChart.vue";
+import Placeholder from "./Placeholder.vue";
 
 function createStream(text, chunkSize = 15, delay = 50) {
   let position = 0;
@@ -115,6 +116,7 @@ function changeTheme() {
         :rehype-plugins="[rehypeKatex]"
         :components-map="{
           BarChart,
+          Placeholder,
         }"
       ></VueMarkdownRenderer>
     </article>
