@@ -1,6 +1,6 @@
 {
   "name": "vue-mdr",
-  "version": "0.0.3-alpha-4",
+  "version": "0.0.3-alpha-5",
   "description": "Tranform markdown string to vue component with `mdast-> hast-> vue node`",
   "module": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
