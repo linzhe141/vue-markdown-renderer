@@ -78,8 +78,8 @@ export const ComponentCodeBlock = defineComponent({
     },
   },
   setup(props) {
+    const componentsMap = inject(componentsMapKey)!;
     return () => {
-      const componentsMap = inject(componentsMapKey)!;
       const node = props.node;
       const placeholder = node.properties.placeholder;
       if (placeholder) {

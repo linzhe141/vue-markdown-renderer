@@ -7,8 +7,8 @@ export const ShikiProvider = defineComponent({
   setup(_, { slots }) {
     const highlighter = ref<Highlighter | null>(null);
     provide(shikiHighlightCoreKey, highlighter);
+    const config = inject(configKey)!;
     onMounted(async () => {
-      const config = inject(configKey)!;
       const _highlighter = await initShikiHighlighter();
       for (const lang of config.value.extraLangs) {
         await _highlighter.loadLanguage(lang);
