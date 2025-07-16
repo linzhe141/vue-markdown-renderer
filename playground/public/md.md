@@ -190,3 +190,7 @@ $$
 \nabla \cdot \vec{\mathbf{B}} & = 0
 \end{align}
 $$
+
+test for image
+
+![img](https://github.com/user-attachments/assets/01b679c8-681c-4ce0-bcce-91742b40e7b4)

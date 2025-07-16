@@ -7,7 +7,11 @@ export const shikiHighlightCoreKey = Symbol() as InjectionKey<
 >;
 
 export const configKey = Symbol() as InjectionKey<
-  ComputedRef<{ theme: "dark" | "light"; extraLangs: Langs[] }>
+  ComputedRef<{
+    theme: "dark" | "light";
+    extraLangs: Langs[];
+    codeBlockRenderer: Component | undefined;
+  }>
 >;
 
 export const componentsMapKey = Symbol() as InjectionKey<

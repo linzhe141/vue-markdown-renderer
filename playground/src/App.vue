@@ -9,6 +9,7 @@ import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import BarChart from "./BarChart.vue";
 import Placeholder from "./Placeholder.vue";
+import CodeBlockRenderer from "./CodeBlockRenderer.vue";
 
 function createStream(text, chunkSize = 15, delay = 50) {
   let position = 0;
@@ -115,6 +116,7 @@ function changeTheme() {
     >
       <VueMarkdownRenderer
         :source="mdText"
+        :code-block-renderer="CodeBlockRenderer"
         :extra-langs="[java]"
         :theme="switchTheme === 'dark' ? 'light' : 'dark'"
         :remark-plugins="[remarkMath]"

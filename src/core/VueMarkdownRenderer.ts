@@ -13,7 +13,7 @@ import remarkRehype from "remark-rehype";
 import remarkGfm from "remark-gfm";
 import { VFile } from "vfile";
 import { unified, type Plugin } from "unified";
-import { componentsMap } from "./segmentText";
+import { segmentTextComponents } from "./segmentText";
 import { ShikiProvider } from "./ShikiProvider";
 import { componentsMapKey, configKey } from "./symbol";
 import { Langs } from "./highlight/shiki";
@@ -21,6 +21,7 @@ import {
   remarkComponentCodeBlock,
   ComponentCodeBlock,
 } from "./plugin/remarkComponentCodeBlock";
+import { ShikiStreamCodeBlock } from "./ShikiStreamCodeBlock";
 
 interface RemarkRehypeOptions {
   allowDangerousHtml?: boolean;
@@ -54,6 +55,9 @@ export default defineComponent({
     theme: {
       type: String as PropType<"light" | "dark">,
       required: true,
+    },
+    codeBlockRenderer: {
+      type: Object as PropType<Component>,
     },
     extraLangs: {
       type: Array as PropType<Langs[]>,
@@ -94,8 +98,9 @@ export default defineComponent({
     const generateVueNode = (tree: any) => {
       const vueVnode = toJsxRuntime(tree, {
         components: {
-          ...componentsMap,
+          ...segmentTextComponents,
           ComponentCodeBlock,
+          pre: ShikiStreamCodeBlock,
         },
         Fragment,
         jsx: jsx,
@@ -108,6 +113,7 @@ export default defineComponent({
     const computedProps = computed(() => ({
       theme: props.theme,
       extraLangs: props.extraLangs,
+      codeBlockRenderer: props.codeBlockRenderer,
     }));
     provide(configKey, computedProps);
     provide(componentsMapKey, props.componentsMap || {});
