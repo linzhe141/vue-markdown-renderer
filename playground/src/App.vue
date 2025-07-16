@@ -12,8 +12,6 @@ import Placeholder from "./Placeholder.vue";
 
 function createStream(text, chunkSize = 15, delay = 50) {
   let position = 0;
-  alert(ReadableStream);
-  alert(Symbol.asyncIterator in ReadableStream.prototype);
   return new ReadableStream({
     pull(controller) {
       return new Promise((resolve) => {
@@ -43,10 +41,9 @@ async function clickHandle() {
   const md = await res.text();
 
   const formatMd = convertLatexDelimiters(md);
-  alert(formatMd);
 
   const stream = createStream(formatMd);
-  alert(stream);
+  // ios 不支持 Symbol.asyncIterator
   const reader = stream.getReader();
   while (true) {
     const { done, value: chunk } = await reader.read();
