@@ -1,3 +1,10 @@
-import { createApp } from "vue";
+import { createApp, h, render } from "vue";
 import App from "./App.vue";
-createApp(App).mount("#app");
+import ErrorBoundary from "./ErrorBoundary.vue";
+const app = createApp(App);
+app.config.errorHandler = (e) => {
+  console.log(e);
+  const errorDom = document.getElementById("error")!;
+  render(h(ErrorBoundary, { error: e }), errorDom);
+};
+app.mount("#app");
