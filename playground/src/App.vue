@@ -12,7 +12,7 @@ import Placeholder from "./Placeholder.vue";
 
 function createStream(text, chunkSize = 15, delay = 50) {
   let position = 0;
-
+  alert(ReadableStream);
   return new ReadableStream({
     pull(controller) {
       return new Promise((resolve) => {
@@ -41,7 +41,11 @@ async function clickHandle() {
   const res = await fetch("./md.md");
   const md = await res.text();
 
-  const stream = createStream(convertLatexDelimiters(md));
+  const formatMd = convertLatexDelimiters(md);
+  alert(formatMd);
+
+  const stream = createStream(formatMd);
+  alert(stream);
   for await (const chunk of stream) {
     mdText.value += chunk;
   }
