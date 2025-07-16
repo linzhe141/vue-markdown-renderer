@@ -13,6 +13,7 @@ import Placeholder from "./Placeholder.vue";
 function createStream(text, chunkSize = 15, delay = 50) {
   let position = 0;
   alert(ReadableStream);
+  alert(Symbol.asyncIterator in ReadableStream.prototype);
   return new ReadableStream({
     pull(controller) {
       return new Promise((resolve) => {
