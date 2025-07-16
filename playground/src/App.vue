@@ -47,7 +47,10 @@ async function clickHandle() {
 
   const stream = createStream(formatMd);
   alert(stream);
-  for await (const chunk of stream) {
+  const reader = stream.getReader();
+  while (true) {
+    const { done, value: chunk } = await reader.read();
+    if (done) break;
     mdText.value += chunk;
   }
   isRender.value = false;
