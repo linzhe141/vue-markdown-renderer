@@ -14,9 +14,9 @@ export interface ElementNode {
 
 export type Node = TextNode | ElementNode;
 
+const segmenter = new Intl.Segmenter("zh", { granularity: "word" });
 function wrap(node: Node) {
   if (node.type === "text") {
-    const segmenter = new Intl.Segmenter("zh", { granularity: "word" });
     return [...segmenter.segment(node.value)].map((s, i) =>
       h("span", { key: i, class: "text-segmenter" }, s.segment)
     );
