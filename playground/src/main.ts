@@ -3,7 +3,6 @@ import App from "./App.vue";
 import ErrorBoundary from "./ErrorBoundary.vue";
 const app = createApp(App);
 app.config.errorHandler = (e) => {
-  console.log(e);
   const errorDom = document.getElementById("error")!;
   render(h(ErrorBoundary, { error: e }), errorDom);
 };

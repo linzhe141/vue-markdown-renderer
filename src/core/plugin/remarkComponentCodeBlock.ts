@@ -83,9 +83,20 @@ export const ComponentCodeBlock = defineComponent({
       const node = props.node;
       const placeholder = node.properties.placeholder;
       if (placeholder) {
-        return h(componentsMap[placeholder] || Placeholder);
+        const target = componentsMap[placeholder];
+        if (target === undefined) {
+          console.warn(
+            `${placeholder} does not exist in componentsMap, the built-in 'Placeholder' will be used instead.`
+          );
+        }
+        return h(target || Placeholder);
       }
       const component = componentsMap[node.properties.type];
+      if (component === undefined) {
+        throw new Error(
+          `${node.properties.type} not exist in componentsMap:${JSON.stringify(componentsMap, null, 2)}`
+        );
+      }
       const componentProps = node.properties.props;
       return h(ComponentWrapper, {
         component,

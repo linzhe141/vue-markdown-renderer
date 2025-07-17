@@ -76,6 +76,9 @@ export default defineComponent({
       default: () => ({ allowDangerousHtml: true }),
     },
   },
+  errorCaptured(e) {
+    console.error("VueMarkdownRenderer captured error", e);
+  },
   setup(props) {
     const createProcessor = () => {
       const { rehypePlugins, remarkPlugins, remarkRehypeOptions } = props;
