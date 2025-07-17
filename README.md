@@ -12,6 +12,7 @@ A Vue.js markdown component with enhanced features, utilizing efficient DOM rend
 - Vercel theme code blocks support dark and light mode
 - Support rendering Vue components using `component-json` code blocks
 - Extensible LaTeX support through remark-math and rehype-katex — simply pass them as plugins
+- Custom code block renderer support via codeBlockRenderer prop — enables full control over how specific code blocks are rendered, with access to highlightVnode and language props
 
 ## Installation
 
@@ -146,7 +147,103 @@ function changeTheme() {
 </template>
 ````
 
-Supports rendering custom Vue components through component-json code blocks. Each code block should contain a JSON object with the following structure:
+### Custom Code Block Rendering
+
+You can take full control over how code blocks are rendered by passing a `codeBlockRenderer` component to the `VueMarkdownRenderer`. This component receives two props:
+
+- `highlightVnode`: a `VNode` containing the syntax-highlighted content powered by Shiki.
+- `language`: a `string` representing the detected language of the code block.
+
+This is useful when you want to add features like copy buttons, custom themes, header labels, or animations around your code blocks.
+
+Example Usage
+
+```vue
+<VueMarkdownRenderer
+  :source="mdText"
+  :code-block-renderer="CodeBlockRenderer"
+  :theme="switchTheme === 'dark' ? 'light' : 'dark'"
+/>
+```
+
+```vue
+<script setup lang="ts">
+import { ref, computed, VNode } from "vue";
+
+const props = defineProps<{
+  highlightVnode: VNode;
+  language: string;
+}>();
+
+const copied = ref(false);
+const contentRef = ref<HTMLElement>();
+
+function copyHandle() {
+  if (!contentRef.value) return;
+  navigator.clipboard.writeText(contentRef.value.textContent || "");
+  copied.value = true;
+  setTimeout(() => (copied.value = false), 2000);
+}
+
+const langLabel = computed(() => props.language?.toUpperCase() || "TEXT");
+</script>
+
+<template>
+  <div
+    class="relative my-4 w-0 min-w-full overflow-hidden rounded-lg bg-[#ededed] text-sm shadow dark:bg-[#171717]"
+  >
+    <!-- Header bar -->
+    <div
+      class="flex items-center justify-between bg-[#2f2f2f] p-2 text-[#cdcdcd]"
+    >
+      <span class="text-xs uppercase tracking-wider text-gray-400">
+        {{ langLabel }}
+      </span>
+      <div class="relative cursor-pointer p-1" @click="copyHandle">
+        <template v-if="copied">
+          <div class="absolute -left-16 -top-6 z-10">
+            <pre
+              class="rounded bg-slate-100 px-2 py-1 text-sm text-green-500 dark:bg-black"
+            >
+Copied!</pre
+            >
+          </div>
+          <svg
+            class="h-4 w-4 text-gray-300"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+          </svg>
+        </template>
+        <template v-else>
+          <svg
+            class="h-4 w-4 text-gray-300"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+            <path
+              d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 18H8V7h11v16z"
+            />
+          </svg>
+        </template>
+      </div>
+    </div>
+
+    <!-- Code block -->
+    <div
+      ref="contentRef"
+      class="not-prose overflow-auto px-3 py-2 font-mono leading-relaxed text-gray-100"
+    >
+      <component :is="props.highlightVnode" />
+    </div>
+  </div>
+</template>
+```
+
+This gives you complete flexibility over how code blocks appear and behave in your markdown rendering flow — great for documentation platforms, MDX-like previews, or blogging engines.
+
+### Supports rendering custom Vue components through component-json code blocks. Each code block should contain a JSON object with the following structure:
 
 - type: The key in componentsMap that corresponds to a registered Vue component.
 
@@ -168,7 +265,7 @@ If no placeholder is specified, a default fallback will be rendered `h("div", { 
 {"type":"BarChart", "props": {"chartData": { "categories": ["type1", "type2", "type3"], "seriesData": [100, 200, 150] }}}
 ```
 
-test for extra lang `java`
+### extra lang `java`
 
 ```java
 public class HelloWorld {
@@ -178,7 +275,7 @@ public class HelloWorld {
 }
 ```
 
-test for latex
+### test latex render
 
 $$
 \begin{align}
