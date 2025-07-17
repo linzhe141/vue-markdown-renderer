@@ -257,12 +257,12 @@ If no placeholder is specified, a default fallback will be rendered `h("div", { 
 
 ````markdown
 ```component-json {"placeholder": "Placeholder"}
-{"type":"BarChart", "props": {"chartData": { "categories": ["type1", "type2", "type3"], "seriesData": [100, 200, 150] }}}
+{"type":"BarChart","props":{"chartData":{"categories":["type1","type2","type3","type4","type5","type6","type7","type8","type9","type10","type11","type12","type13","type14","type15","type16","type17","type18","type19","type20"],"seriesData":[100,200,150,180,120,130,170,160,190,210,220,140,125,155,165,175,185,195,205,215]}}}
 ```
 ````
 
 ```component-json {"placeholder": "Placeholder"}
-{"type":"BarChart", "props": {"chartData": { "categories": ["type1", "type2", "type3"], "seriesData": [100, 200, 150] }}}
+{"type":"BarChart","props":{"chartData":{"categories":["type1","type2","type3","type4","type5","type6","type7","type8","type9","type10","type11","type12","type13","type14","type15","type16","type17","type18","type19","type20"],"seriesData":[100,200,150,180,120,130,170,160,190,210,220,140,125,155,165,175,185,195,205,215]}}}
 ```
 
 ### extra lang `java`

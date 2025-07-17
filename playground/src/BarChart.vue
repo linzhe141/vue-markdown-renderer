@@ -119,6 +119,6 @@ watch(
 <style scoped>
 .echarts-container {
   width: 100%;
-  height: 400px; /* Adjust height as needed */
+  height: 500px;
 }
 </style>
