@@ -45,9 +45,6 @@ function jsx(type: any, props: Record<any, any>, key: any) {
 export default defineComponent({
   name: "VueMarkdownRenderer",
   props: {
-    componentsMap: {
-      type: Object as PropType<Record<string, Component>>,
-    },
     source: {
       type: String as PropType<string>,
       required: true,
@@ -55,6 +52,9 @@ export default defineComponent({
     theme: {
       type: String as PropType<"light" | "dark">,
       required: true,
+    },
+    componentsMap: {
+      type: Object as PropType<Record<string, Component>>,
     },
     codeBlockRenderer: {
       type: Object as PropType<Component>,
@@ -80,17 +80,25 @@ export default defineComponent({
     console.error("VueMarkdownRenderer captured error", e);
   },
   setup(props) {
-    const createProcessor = () => {
-      const { rehypePlugins, remarkPlugins, remarkRehypeOptions } = props;
+    const computedProps = computed(() => ({
+      theme: props.theme,
+      extraLangs: props.extraLangs,
+      codeBlockRenderer: props.codeBlockRenderer,
+    }));
+    provide(configKey, computedProps);
+    provide(componentsMapKey, props.componentsMap || {});
 
-      return unified()
+    const computedProcessor = computed(() => {
+      const { rehypePlugins, remarkPlugins, remarkRehypeOptions } = props;
+      const processor = unified()
         .use(remarkParse)
         .use(remarkGfm)
         .use(remarkComponentCodeBlock)
         .use(remarkPlugins)
         .use(remarkRehype, remarkRehypeOptions)
         .use(rehypePlugins);
-    };
+      return processor;
+    });
 
     const createFile = (md: string) => {
       const file = new VFile();
@@ -113,21 +121,16 @@ export default defineComponent({
       });
       return vueVnode;
     };
-    const computedProps = computed(() => ({
-      theme: props.theme,
-      extraLangs: props.extraLangs,
-      codeBlockRenderer: props.codeBlockRenderer,
-    }));
-    provide(configKey, computedProps);
-    provide(componentsMapKey, props.componentsMap || {});
-    const processor = createProcessor();
-    return () => {
+
+    const computedVNode = computed(() => {
+      const processor = computedProcessor.value;
       const file = createFile(props.source);
-      const vnode = generateVueNode(
-        processor.runSync(processor.parse(file), file)
-      );
+      return generateVueNode(processor.runSync(processor.parse(file), file));
+    });
+
+    return () => {
       return h(ShikiProvider, null, {
-        default: () => vnode,
+        default: () => computedVNode.value,
       });
     };
   },

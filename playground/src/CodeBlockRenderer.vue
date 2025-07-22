@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, VNode } from "vue";
+import { ref, computed, VNode, watchEffect } from "vue";
 
 const props = defineProps<{
   highlightVnode: VNode;
@@ -15,7 +15,10 @@ function copyHandle() {
   copied.value = true;
   setTimeout(() => (copied.value = false), 2000);
 }
-
+watchEffect(() => {
+  console.log(props.highlightVnode);
+  console.log(props.language);
+});
 const langLabel = computed(() => props.language?.toUpperCase() || "TEXT");
 </script>
 

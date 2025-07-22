@@ -1,6 +1,6 @@
 <script setup>
 import { VueMarkdownRenderer } from "../../src";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, shallowRef } from "vue";
 import "./animation.css";
 import Button from "./Button.vue";
 import java from "@shikijs/langs/java";
@@ -9,7 +9,7 @@ import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import BarChart from "./BarChart.vue";
 import Placeholder from "./Placeholder.vue";
-import CodeBlockRenderer from "./CodeBlockRenderer.vue";
+import CodeBlockRendererComp from "./CodeBlockRenderer.vue";
 
 function createStream(text, chunkSize = 15, delay = 50) {
   let position = 0;
@@ -80,6 +80,20 @@ function changeTheme() {
   }
   switchTheme.value = switchTheme.value === "dark" ? "light" : "dark";
 }
+const remarkPlugins = ref([]);
+const rehypePlugins = ref([]);
+const componentsMap = {
+  BarChart,
+  Placeholder,
+};
+const extraLangs = ref([]);
+const codeBlockRenderer = shallowRef(null);
+window.foo = () => {
+  remarkPlugins.value = [remarkMath];
+  rehypePlugins.value = [rehypeKatex];
+  extraLangs.value = [java];
+  codeBlockRenderer.value = CodeBlockRendererComp;
+};
 </script>
 
 <template>
@@ -116,15 +130,12 @@ function changeTheme() {
     >
       <VueMarkdownRenderer
         :source="mdText"
-        :code-block-renderer="CodeBlockRenderer"
-        :extra-langs="[java]"
         :theme="switchTheme === 'dark' ? 'light' : 'dark'"
-        :remark-plugins="[remarkMath]"
-        :rehype-plugins="[rehypeKatex]"
-        :components-map="{
-          BarChart,
-          Placeholder,
-        }"
+        :components-map
+        :code-block-renderer
+        :extra-langs
+        :remark-plugins
+        :rehype-plugins
       ></VueMarkdownRenderer>
     </article>
   </div>
