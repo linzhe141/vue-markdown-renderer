@@ -16,8 +16,7 @@ function copyHandle() {
   setTimeout(() => (copied.value = false), 2000);
 }
 watchEffect(() => {
-  console.log(props.highlightVnode);
-  console.log(props.language);
+  console.log(props.language, props.highlightVnode);
 });
 const langLabel = computed(() => props.language?.toUpperCase() || "TEXT");
 </script>

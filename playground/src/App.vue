@@ -80,20 +80,14 @@ function changeTheme() {
   }
   switchTheme.value = switchTheme.value === "dark" ? "light" : "dark";
 }
-const remarkPlugins = ref([remarkMath]);
-const rehypePlugins = ref([rehypeKatex]);
+const remarkPlugins = [remarkMath];
+const rehypePlugins = [rehypeKatex];
 const componentsMap = {
   BarChart,
   Placeholder,
 };
-const extraLangs = ref([java]);
-const codeBlockRenderer = shallowRef(CodeBlockRendererComp);
-window.foo = () => {
-  remarkPlugins.value = [remarkMath];
-  rehypePlugins.value = [rehypeKatex];
-  extraLangs.value = [java];
-  codeBlockRenderer.value = CodeBlockRendererComp;
-};
+const extraLangs = [java];
+const codeBlockRenderer = CodeBlockRendererComp;
 </script>
 
 <template>

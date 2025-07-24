@@ -1,6 +1,6 @@
 import { visit } from "unist-util-visit";
-import { defineComponent, h, inject } from "vue";
-import { componentsMapKey } from "../symbol";
+import { computed, defineComponent, h } from "vue";
+import { useProxyProps } from "../useProxyProps";
 
 export const remarkComponentCodeBlock = () => {
   return (tree) => {
@@ -78,12 +78,14 @@ export const ComponentCodeBlock = defineComponent({
     },
   },
   setup(props) {
-    const componentsMap = inject(componentsMapKey)!;
+    const proxyProps = useProxyProps();
+    const computedComponentsMap = computed(() => proxyProps.componentsMap);
+
     return () => {
       const node = props.node;
       const placeholder = node.properties.placeholder;
       if (placeholder) {
-        const target = componentsMap[placeholder];
+        const target = computedComponentsMap.value[placeholder];
         if (target === undefined) {
           console.warn(
             `${placeholder} does not exist in componentsMap, the built-in 'Placeholder' will be used instead.`
@@ -91,10 +93,11 @@ export const ComponentCodeBlock = defineComponent({
         }
         return h(target || Placeholder);
       }
-      const component = componentsMap[node.properties.type];
+
+      const component = computedComponentsMap.value[node.properties.type];
       if (component === undefined) {
         throw new Error(
-          `${node.properties.type} not exist in componentsMap:${JSON.stringify(componentsMap, null, 2)}`
+          `${node.properties.type} not exist in componentsMap:${JSON.stringify(computedComponentsMap.value, null, 2)}`
         );
       }
       const componentProps = node.properties.props;

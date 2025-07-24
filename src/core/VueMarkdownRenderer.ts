@@ -2,7 +2,6 @@ import {
   h,
   defineComponent,
   type PropType,
-  provide,
   computed,
   type Component,
 } from "vue";
@@ -15,13 +14,13 @@ import { VFile } from "vfile";
 import { unified, type Plugin } from "unified";
 import { segmentTextComponents } from "./segmentText";
 import { ShikiProvider } from "./ShikiProvider";
-import { componentsMapKey, configKey } from "./symbol";
 import { Langs } from "./highlight/shiki";
 import {
   remarkComponentCodeBlock,
   ComponentCodeBlock,
 } from "./plugin/remarkComponentCodeBlock";
 import { ShikiStreamCodeBlock } from "./ShikiStreamCodeBlock";
+import { provideProxyProps } from "./useProxyProps";
 
 interface RemarkRehypeOptions {
   allowDangerousHtml?: boolean;
@@ -37,6 +36,12 @@ function jsx(type: any, props: Record<any, any>, key: any) {
   if (type === Fragment) {
     return h(type, props, children);
   } else if (typeof type !== "string") {
+    if (type === ShikiStreamCodeBlock) {
+      // 使用json字符串作为prop的目的是防止ShikiStreamCodeBlock组件不必要的re-render
+      const nodeJSON = JSON.stringify(props.node);
+      delete props.node;
+      return h(type, { ...props, nodeJSON });
+    }
     return h(type, props);
   }
   return h(type, props, children);
@@ -80,13 +85,7 @@ export default defineComponent({
     console.error("VueMarkdownRenderer captured error", e);
   },
   setup(props) {
-    const computedProps = computed(() => ({
-      theme: props.theme,
-      extraLangs: props.extraLangs,
-      codeBlockRenderer: props.codeBlockRenderer,
-    }));
-    provide(configKey, computedProps);
-    provide(componentsMapKey, props.componentsMap || {});
+    provideProxyProps(props);
 
     const computedProcessor = computed(() => {
       const { rehypePlugins, remarkPlugins, remarkRehypeOptions } = props;

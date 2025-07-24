@@ -1,27 +1,37 @@
-import { computed, defineComponent, h, inject, type PropType, ref } from "vue";
+import { computed, defineComponent, h } from "vue";
 import { ShikiCachedRenderer } from "shiki-stream/vue";
 import { useShiki } from "./ShikiProvider";
 import { THEME } from "./highlight/codeTheme";
-import { configKey } from "./symbol";
 import { ElementNode } from "./segmentText";
+import { useProxyProps } from "./useProxyProps";
+
+const FALLBACK_LANG = "ts";
 
 export const ShikiStreamCodeBlock = defineComponent({
   name: "pre-wrapper",
   props: {
-    node: {
-      type: Object as PropType<ElementNode>,
+    nodeJSON: {
+      type: String,
       required: true,
     },
   },
   setup(props) {
-    const codeChunk = ref("");
+    const proxyProps = useProxyProps();
     const { highlighter } = useShiki();
-    const fallbackLang = "ts";
+    const computedCodeBlockRenderer = computed(
+      () => proxyProps.codeBlockRenderer
+    );
+    const themeStyle = computed(() => {
+      const theme = proxyProps.theme;
+      return THEME[theme];
+    });
+
     function getCodeMeta() {
+      const node = JSON.parse(props.nodeJSON) as ElementNode;
       const loadedLangs = highlighter!.value!.getLoadedLanguages();
-      let language = fallbackLang;
+      let language = "";
       let code = "";
-      const codeNode = props.node.children[0];
+      const codeNode = node.children[0];
       if (
         codeNode &&
         codeNode.type === "element" &&
@@ -71,34 +81,32 @@ export const ShikiStreamCodeBlock = defineComponent({
           }
         }
       }
-      if (!loadedLangs.includes(language)) language = fallbackLang;
+      let highlightLang = language;
+      if (!loadedLangs.includes(highlightLang)) highlightLang = FALLBACK_LANG;
       return {
+        highlightLang,
         language,
         code,
       };
     }
-    const config = inject(configKey)!;
-    const themeStyle = computed(() => {
-      const theme = config!.value.theme;
-      return THEME[theme];
-    });
+
     return () => {
       if (!highlighter!.value) return null;
-      const { language, code } = getCodeMeta();
-      if (code === "") return null;
-      codeChunk.value = code;
+      const { highlightLang, language, code: codeChunk } = getCodeMeta();
+      if (codeChunk === "") return null;
       const highlightVnode = h(ShikiCachedRenderer, {
         highlighter: highlighter!.value,
-        code: codeChunk.value,
-        lang: language === fallbackLang ? fallbackLang : language,
+        code: codeChunk,
+        lang: highlightLang,
         theme: "css-variables",
         style: {
           ...themeStyle.value,
           background: "var(--vercel-code-block-background)",
         },
       });
-      if (config.value.codeBlockRenderer) {
-        return h(config.value.codeBlockRenderer, {
+
+      if (computedCodeBlockRenderer.value) {
+        return h(computedCodeBlockRenderer.value, {
           highlightVnode,
           language,
         });
