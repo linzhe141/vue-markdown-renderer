@@ -12,4 +12,6 @@ export const configPropsKey = Symbol() as InjectionKey<{
   extraLangs: Langs[];
   codeBlockRenderer: Component | undefined;
   componentsMap: Record<string, Component>;
+  echartRenderer: Component | undefined;
+  echartRendererPlaceholder: Component | undefined;
 }>;

@@ -19,6 +19,10 @@ import {
   remarkComponentCodeBlock,
   ComponentCodeBlock,
 } from "./plugin/remarkComponentCodeBlock";
+import {
+  remarkEchartCodeBlock,
+  EchartCodeBlock,
+} from "./plugin/remarkEchartCodeBlock";
 import { ShikiStreamCodeBlock } from "./ShikiStreamCodeBlock";
 import { provideProxyProps } from "./useProxyProps";
 
@@ -64,6 +68,12 @@ export default defineComponent({
     codeBlockRenderer: {
       type: Object as PropType<Component>,
     },
+    echartRenderer: {
+      type: Object as PropType<Component>,
+    },
+    echartRendererPlaceholder: {
+      type: Object as PropType<Component>,
+    },
     extraLangs: {
       type: Array as PropType<Langs[]>,
       default: () => [],
@@ -86,13 +96,13 @@ export default defineComponent({
   },
   setup(props) {
     provideProxyProps(props);
-
     const computedProcessor = computed(() => {
       const { rehypePlugins, remarkPlugins, remarkRehypeOptions } = props;
       const processor = unified()
         .use(remarkParse)
         .use(remarkGfm)
         .use(remarkComponentCodeBlock)
+        .use(remarkEchartCodeBlock)
         .use(remarkPlugins)
         .use(remarkRehype, remarkRehypeOptions)
         .use(rehypePlugins);
@@ -110,6 +120,7 @@ export default defineComponent({
         components: {
           ...segmentTextComponents,
           ComponentCodeBlock,
+          EchartCodeBlock,
           pre: ShikiStreamCodeBlock,
         },
         Fragment,

@@ -11,6 +11,7 @@ A Vue.js markdown component with enhanced features, utilizing efficient DOM rend
 - Seamless Vue.js integration
 - Vercel theme code blocks support dark and light mode
 - Support rendering Vue components using `component-json` code blocks
+- Support rendering echart options using `echarts` code blocks
 - Extensible LaTeX support through remark-math and rehype-katex — simply pass them as plugins
 - Custom code block renderer support via codeBlockRenderer prop — enables full control over how specific code blocks are rendered, with access to highlightVnode and language props
 
@@ -263,6 +264,132 @@ If no placeholder is specified, a default fallback will be rendered `h("div", { 
 
 ```component-json {"placeholder": "Placeholder"}
 {"type":"BarChart","props":{"chartData":{"categories":["type1","type2","type3","type4","type5","type6","type7","type8","type9","type10","type11","type12","type13","type14","type15","type16","type17","type18","type19","type20"],"seriesData":[100,200,150,180,120,130,170,160,190,210,220,140,125,155,165,175,185,195,205,215]}}}
+```
+
+### Supports rendering ECharts code blocks
+
+In addition to `component-json` code blocks, you can directly render ECharts.
+The content of the code block should be a valid ECharts configuration object (`option`).
+
+#### Usage
+
+````markdown
+```echarts
+{
+  "title": {
+    "text": "数据对比趋势变化",
+    "left": "center"
+  },
+  "tooltip": {
+    "trigger": "axis",
+    "axisPointer": {
+      "type": "cross",
+      "crossStyle": { "color": "#999" }
+    },
+    "formatter": "{b}<br/>{a0}: {c0}"
+  },
+  "legend": {
+    "data": ["本期"],
+    "top": "bottom"
+  },
+  "grid": {
+    "left": "3%",
+    "right": "4%",
+    "bottom": "10%",
+    "containLabel": true
+  },
+  "xAxis": [
+    {
+      "type": "category",
+      "data": ["xxx", "zzz"],
+      "axisPointer": { "type": "shadow" }
+    }
+  ],
+  "yAxis": [
+    {
+      "type": "value",
+      "name": "数值",
+      "min": 0,
+      "axisLabel": { "formatter": "{value}" }
+    }
+  ],
+  "series": [
+    {
+      "name": "本期",
+      "type": "bar",
+      "data": [5061.1429, 504.8844],
+      "itemStyle": { "color": "#3ba272" }
+    }
+  ]
+}
+```
+````
+```echarts
+{
+  "title": {
+    "text": "数据对比趋势变化",
+    "left": "center"
+  },
+  "tooltip": {
+    "trigger": "axis",
+    "axisPointer": {
+      "type": "cross",
+      "crossStyle": { "color": "#999" }
+    },
+    "formatter": "{b}<br/>{a0}: {c0}"
+  },
+  "legend": {
+    "data": ["本期"],
+    "top": "bottom"
+  },
+  "grid": {
+    "left": "3%",
+    "right": "4%",
+    "bottom": "10%",
+    "containLabel": true
+  },
+  "xAxis": [
+    {
+      "type": "category",
+      "data": ["xxx", "zzz"],
+      "axisPointer": { "type": "shadow" }
+    }
+  ],
+  "yAxis": [
+    {
+      "type": "value",
+      "name": "数值",
+      "min": 0,
+      "axisLabel": { "formatter": "{value}" }
+    }
+  ],
+  "series": [
+    {
+      "name": "本期",
+      "type": "bar",
+      "data": [5061.1429, 504.8844],
+      "itemStyle": { "color": "#3ba272" }
+    }
+  ]
+}
+```
+#### Placeholder Support
+
+If you want to show a placeholder while rendering the chart, you can set the `:echart-renderer-placeholder` prop in `<VueMarkdownRenderer>`:
+
+```vue
+<VueMarkdownRenderer
+  :source="mdText"
+  :theme="switchTheme === 'dark' ? 'light' : 'dark'"
+  :echart-renderer="EchartRenderer"
+  :echart-renderer-placeholder="Placeholder"
+/>
+```
+
+If no placeholder is specified, a default fallback will be rendered:
+
+```js
+h("div", { class: "vue-mdr-default-echart-placeholder" })
 ```
 
 ### extra lang `java`

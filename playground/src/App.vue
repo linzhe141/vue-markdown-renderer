@@ -10,6 +10,7 @@ import rehypeKatex from "rehype-katex";
 import BarChart from "./BarChart.vue";
 import Placeholder from "./Placeholder.vue";
 import CodeBlockRendererComp from "./CodeBlockRenderer.vue";
+import EchartRenderer from "./EchartRenderer.vue";
 
 function createStream(text, chunkSize = 15, delay = 50) {
   let position = 0;
@@ -130,6 +131,8 @@ const codeBlockRenderer = CodeBlockRendererComp;
         :extra-langs
         :remark-plugins
         :rehype-plugins
+        :echart-renderer="EchartRenderer"
+        :echart-renderer-placeholder="Placeholder"
       ></VueMarkdownRenderer>
     </article>
   </div>
