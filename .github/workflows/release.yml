@@ -32,10 +32,11 @@ jobs:
         run: pnpm run build
 
       - name: Check if version already exists on npm
+        id: check-version
         run: node scripts/check-version.mjs
 
       - name: Publish to npm
-        if: ${{ success() }}
+        if: steps.check-version.outputs.publish == 'true'
         run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
