@@ -47,7 +47,7 @@ const collapsed = ref(false);
     <div class="border-l border-gray-300 pl-4 dark:border-gray-700">
       <article
         :class="{ 'h-0 overflow-hidden': collapsed }"
-        class="vue-markdown-wrapper prose prose-slate dark:prose-invert text-[12px] transition-all duration-300"
+        class="vue-markdown-wrapper prose prose-slate dark:prose-invert max-w-full text-[12px] transition-all duration-300"
       >
         <VueMarkdownRenderer :source="thinkchunk" :theme="'light'" />
       </article>
