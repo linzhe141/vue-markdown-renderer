@@ -11,8 +11,10 @@ import BarChart from "./BarChart.vue";
 import Placeholder from "./Placeholder.vue";
 import CodeBlockRendererComp from "./CodeBlockRenderer.vue";
 import EchartRenderer from "./EchartRenderer.vue";
+import { transformThink } from "./transfrom/think/think";
+import Think from "./transfrom/think/Think.vue";
 
-function createStream(text, chunkSize = 15, delay = 50) {
+function createStream(text, chunkSize = 2, delay = 10) {
   let position = 0;
   return new ReadableStream({
     pull(controller) {
@@ -35,7 +37,10 @@ function createStream(text, chunkSize = 15, delay = 50) {
   });
 }
 const mdText = ref("");
+const thinkText = ref("");
+const thinking = ref(true);
 const isRender = ref(true);
+
 async function clickHandle() {
   mdText.value = "";
   isRender.value = true;
@@ -47,13 +52,22 @@ async function clickHandle() {
   const stream = createStream(formatMd);
   // ios 不支持 Symbol.asyncIterator
   const reader = stream.getReader();
+
+  const processThink = transformThink(({ buffer, done }) => {
+    thinking.value = !done;
+    thinkText.value = buffer;
+  });
   while (true) {
     const { done, value: chunk } = await reader.read();
     if (done) break;
-    mdText.value += chunk;
+    if (!thinking.value) {
+      mdText.value += chunk;
+    }
+    processThink(chunk);
   }
   isRender.value = false;
 }
+
 onMounted(clickHandle);
 function convertLatexDelimiters(text) {
   const pattern =
@@ -120,20 +134,28 @@ const codeBlockRenderer = CodeBlockRendererComp;
       </a>
       <Button @click="changeTheme">change theme to {{ switchTheme }}</Button>
     </div>
-    <article
-      class="vue-markdown-wrapper prose prose-slate dark:prose-invert mx-auto my-10"
-    >
-      <VueMarkdownRenderer
-        :source="mdText"
-        :theme="switchTheme === 'dark' ? 'light' : 'dark'"
-        :components-map
-        :code-block-renderer
-        :extra-langs
-        :remark-plugins
-        :rehype-plugins
-        :echart-renderer="EchartRenderer"
-        :echart-renderer-placeholder="Placeholder"
-      ></VueMarkdownRenderer>
-    </article>
+    <!-- message -->
+    <div>
+      <Think
+        v-if="thinkText"
+        :thinkchunk="thinkText"
+        :thinking="thinking"
+      ></Think>
+      <article
+        class="vue-markdown-wrapper prose prose-slate dark:prose-invert mx-auto my-10"
+      >
+        <VueMarkdownRenderer
+          :source="mdText"
+          :theme="switchTheme === 'dark' ? 'light' : 'dark'"
+          :components-map
+          :code-block-renderer
+          :extra-langs
+          :remark-plugins
+          :rehype-plugins
+          :echart-renderer="EchartRenderer"
+          :echart-renderer-placeholder="Placeholder"
+        ></VueMarkdownRenderer>
+      </article>
+    </div>
   </div>
 </template>

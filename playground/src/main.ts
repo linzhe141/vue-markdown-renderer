@@ -1,3 +1,4 @@
+import "./polyfill";
 import { createApp, h, render } from "vue";
 import App from "./App.vue";
 import ErrorBoundary from "./ErrorBoundary.vue";

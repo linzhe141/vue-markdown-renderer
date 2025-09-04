@@ -1,3 +1,13 @@
+<think>
+- Vue-powered rendering engine for optimal DOM updates
+- Syntax highlighting power by shiki
+- Seamless Vue.js integration
+- Vercel theme code blocks support dark and light mode
+- Support rendering Vue components using `component-json` code blocks
+- Support rendering echart options using `echarts` code blocks
+- Extensible LaTeX support through remark-math and rehype-katex — simply pass them as plugins
+- Custom code block renderer support via codeBlockRenderer prop — enables full control over how specific code blocks are rendered, with access to highlightVnode and language props
+</think>
 # VueMarkdownRenderer
 
 A Vue.js markdown component with enhanced features, utilizing efficient DOM rendering through Vue's virtual DOM.
