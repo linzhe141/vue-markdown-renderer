@@ -49,13 +49,13 @@ export const ShikiStreamCodeBlock = defineComponent({
             language = languageName;
           }
 
-          const lastChar = codeTextNode.value.at(-1);
+          const lastChar = codeTextNode.value[codeTextNode.value.length - 1];
           const codeText = codeTextNode.value.slice(
             0,
             codeTextNode.value.length - (lastChar === "\n" ? 1 : 0)
           );
           const lines = codeText.split("\n");
-          const lastLine = lines.at(-1);
+          const lastLine = lines[lines.length - 1];
 
           let matchedMarkdownCount = 0;
           if (language === "markdown") {
