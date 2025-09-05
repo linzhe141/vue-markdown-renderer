@@ -12,7 +12,7 @@ const collapsed = ref(false);
 
 <template>
   <div
-    class="relative mx-auto w-full max-w-[640px] rounded-2xl bg-white p-4 shadow-md transition-all duration-300 dark:bg-gray-800"
+    class="relative mx-auto w-full max-w-[640px] rounded-2xl bg-white p-4 shadow-md dark:bg-gray-800"
   >
     <!-- 顶部按钮和状态 -->
     <div class="mb-2 flex items-center justify-between">
@@ -37,7 +37,7 @@ const collapsed = ref(false);
       </div>
       <button
         @click="collapsed = !collapsed"
-        class="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700 transition-colors duration-200 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+        class="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
       >
         {{ collapsed ? "展开" : "折叠" }}
       </button>
@@ -47,7 +47,7 @@ const collapsed = ref(false);
     <div class="border-l border-gray-300 pl-4 dark:border-gray-700">
       <article
         :class="{ 'h-0 overflow-hidden': collapsed }"
-        class="vue-markdown-wrapper prose prose-slate dark:prose-invert max-w-full text-[12px] transition-all duration-300"
+        class="vue-markdown-wrapper prose prose-slate dark:prose-invert max-w-full text-[12px]"
       >
         <VueMarkdownRenderer :source="thinkchunk" :theme="'light'" />
       </article>
