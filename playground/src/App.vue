@@ -13,7 +13,8 @@ import CodeBlockRendererComp from "./CodeBlockRenderer.vue";
 import EchartRenderer from "./EchartRenderer.vue";
 import { transformThink } from "./transfrom/think/think";
 import Think from "./transfrom/think/Think.vue";
-
+import { md } from "./md";
+const IS_DEMO = new URLSearchParams(location.search).get("demo");
 function createStream(text, chunkSize = 2, delay = 10) {
   let position = 0;
   return new ReadableStream({
@@ -38,32 +39,43 @@ function createStream(text, chunkSize = 2, delay = 10) {
 }
 const mdText = ref("");
 const thinkText = ref("");
+// 如果开启think 模式，这个状态必须是true，就是默认先进入think状态
 const thinking = ref(true);
 const isRender = ref(true);
 
 async function clickHandle() {
   mdText.value = "";
   isRender.value = true;
-  const res = await fetch("./md.md");
-  const md = await res.text();
-
-  const formatMd = convertLatexDelimiters(md);
+  let formatMd = "";
+  if (IS_DEMO) {
+    formatMd = convertLatexDelimiters(md);
+  } else {
+    const res = await fetch("./md.md");
+    const md = await res.text();
+    formatMd = convertLatexDelimiters(md);
+  }
 
   const stream = createStream(formatMd);
   // ios 不支持 Symbol.asyncIterator
   const reader = stream.getReader();
 
-  const processThink = transformThink(({ buffer, done }) => {
-    thinking.value = !done;
-    thinkText.value = buffer;
-  });
+  const processThink = transformThink();
   while (true) {
     const { done, value: chunk } = await reader.read();
     if (done) break;
     if (!thinking.value) {
       mdText.value += chunk;
     }
-    processThink(chunk);
+    const thinkResult = processThink(chunk);
+    if (thinkResult) {
+      const { done, buffer, rest } = thinkResult;
+      thinking.value = !done;
+      thinkText.value = buffer;
+      // 如果思考完成了，但是还有剩余的文本，需要放到正文里面
+      if (done && rest) {
+        mdText.value = rest;
+      }
+    }
   }
   isRender.value = false;
 }

@@ -1,7 +1,7 @@
 const startTag = "<think>";
 const endTag = "</think>";
 type ThinkState = "idle" | "thinking" | "finished";
-export function transformThink(callback: Function) {
+export function transformThink() {
   let buffer = "";
   let state: ThinkState = "idle";
 
@@ -19,11 +19,12 @@ export function transformThink(callback: Function) {
       const endIdx = buffer.indexOf(endTag);
       if (endIdx !== -1) {
         const content = buffer.slice(0, endIdx);
-        if (content) callback({ buffer: content, done: true });
+        const rest = buffer.slice(endIdx + endTag.length);
         state = "finished";
+        return { buffer: content, rest, done: true };
       } else {
         if (buffer) {
-          callback({ buffer, done: false });
+          return { buffer, done: false };
         }
       }
     }
