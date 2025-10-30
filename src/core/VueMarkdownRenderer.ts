@@ -12,19 +12,19 @@ import remarkRehype from "remark-rehype";
 import remarkGfm from "remark-gfm";
 import { VFile } from "vfile";
 import { unified, type Plugin } from "unified";
-import { segmentTextComponents } from "./segmentText";
-import { ShikiProvider } from "./ShikiProvider";
-import { Langs } from "./highlight/shiki";
+import { segmentTextComponents } from "./segmentText.js";
+import { ShikiProvider } from "./ShikiProvider.js";
+import { Langs } from "./highlight/shiki.js";
 import {
   remarkComponentCodeBlock,
   ComponentCodeBlock,
-} from "./plugin/remarkComponentCodeBlock";
+} from "./plugin/remarkComponentCodeBlock.js";
 import {
   remarkEchartCodeBlock,
   EchartCodeBlock,
-} from "./plugin/remarkEchartCodeBlock";
-import { ShikiStreamCodeBlock } from "./ShikiStreamCodeBlock";
-import { provideProxyProps } from "./useProxyProps";
+} from "./plugin/remarkEchartCodeBlock.js";
+import { ShikiStreamCodeBlock } from "./ShikiStreamCodeBlock.js";
+import { provideProxyProps } from "./useProxyProps.js";
 
 interface RemarkRehypeOptions {
   allowDangerousHtml?: boolean;

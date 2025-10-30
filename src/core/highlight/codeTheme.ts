@@ -1,5 +1,5 @@
 import { type CSSProperties } from "vue";
-import { createCssVariablesTheme } from "./theme-css-variables";
+import { createCssVariablesTheme } from "./theme-css-variables.js";
 export const FONTS = [
   "jetbrains-mono",
   "geist-mono",

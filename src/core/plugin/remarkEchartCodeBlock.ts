@@ -1,6 +1,6 @@
 import { visit } from "unist-util-visit";
 import { computed, defineComponent, h } from "vue";
-import { useProxyProps } from "../useProxyProps";
+import { useProxyProps } from "../useProxyProps.js";
 
 export const remarkEchartCodeBlock = () => {
   return (tree) => {

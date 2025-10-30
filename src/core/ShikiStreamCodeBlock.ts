@@ -1,9 +1,9 @@
 import { computed, defineComponent, h } from "vue";
 import { ShikiCachedRenderer } from "shiki-stream/vue";
-import { useShiki } from "./ShikiProvider";
-import { THEME } from "./highlight/codeTheme";
-import { ElementNode } from "./segmentText";
-import { useProxyProps } from "./useProxyProps";
+import { useShiki } from "./ShikiProvider.js";
+import { THEME } from "./highlight/codeTheme.js";
+import { ElementNode } from "./segmentText.js";
+import { useProxyProps } from "./useProxyProps.js";
 
 const FALLBACK_LANG = "ts";
 

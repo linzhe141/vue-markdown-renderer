@@ -3,7 +3,7 @@ import {
   createHighlighterCore,
   createOnigurumaEngine,
 } from "shiki";
-import { shikiTheme } from "./codeTheme";
+import { shikiTheme } from "./codeTheme.js";
 let highlighter: Highlighter | null = null;
 
 export type Langs = Parameters<Highlighter["loadLanguage"]>[0];

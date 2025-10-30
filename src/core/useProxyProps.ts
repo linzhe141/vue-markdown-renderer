@@ -1,5 +1,5 @@
 import { inject, provide } from "vue";
-import { configPropsKey } from "./symbol";
+import { configPropsKey } from "./symbol.js";
 
 export function provideProxyProps(props: any) {
   const proxy = new Proxy(props, {

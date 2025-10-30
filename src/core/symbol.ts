@@ -1,6 +1,6 @@
 import type { Highlighter } from "shiki";
 import type { Component, InjectionKey, Ref } from "vue";
-import { Langs } from "./highlight/shiki";
+import { Langs } from "./highlight/shiki.js";
 
 export const shikiHighlightCoreKey = Symbol() as InjectionKey<
   Ref<Highlighter | null>

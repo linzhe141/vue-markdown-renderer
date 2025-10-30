@@ -1,2 +1,2 @@
-import VueMarkdownRenderer from "./core/VueMarkdownRenderer";
+import VueMarkdownRenderer from "./core/VueMarkdownRenderer.js";
 export { VueMarkdownRenderer };
