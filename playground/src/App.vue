@@ -1,5 +1,6 @@
-<script setup>
+<script setup lang="ts">
 import { VueMarkdownRenderer } from "../../src";
+import { type Plugin } from "unified";
 import { onMounted, ref } from "vue";
 import "./animation.css";
 import Button from "./components/Button.vue";
@@ -12,25 +13,22 @@ import {
   CodeBlockRenderer,
   EchartRenderer,
   Placeholder,
+  Think,
 } from "./components/markdown";
-import { transformThink } from "./transfrom/think/think";
-import Think from "./transfrom/think/Think.vue";
 import { md as thinkMd } from "./examples/think";
+import { ParseNode, preParseStreamChunk } from "./preParseStreamChunk";
 import { convertLatexDelimiters, createStream } from "./utils";
 
 const IS_THINK_DEMO = new URLSearchParams(location.search).get("thinkdemo");
 
-const parseNode = ref([]);
-const mdText = ref("");
-const thinkText = ref("");
-// 如果开启think 模式，这个状态必须是true，就是默认先进入think状态
-const thinking = ref(false);
 const isRendering = ref(true);
 
+const parseNodes = ref<ParseNode[]>([]);
+
 async function clickHandle() {
-  mdText.value = "";
   isRendering.value = true;
   let formatMd = "";
+  parseNodes.value = [];
   if (IS_THINK_DEMO) {
     formatMd = convertLatexDelimiters(thinkMd);
   } else {
@@ -39,48 +37,16 @@ async function clickHandle() {
     formatMd = convertLatexDelimiters(md);
   }
 
-  const stream = createStream(formatMd);
+  const stream = createStream(formatMd, 30, 50);
   // ios 不支持 Symbol.asyncIterator
   const reader = stream.getReader();
 
-  const processThink = transformThink();
+  const processer = preParseStreamChunk();
   while (true) {
     const { done, value: chunk } = await reader.read();
     if (done) break;
-    debugger;
-    const thinkResult = processThink(chunk);
-    const { state, buffer, rest } = thinkResult;
-    thinking.value = state === "thinking";
-    if (state === "idle" || state === "finished") {
-      debugger;
-      const contentNode = {
-        type: "content",
-        content: buffer,
-      };
-      const lastNode = parseNode.value[parseNode.value.length - 1];
-      if (lastNode?.type === "content") {
-        lastNode.content = buffer;
-      } else {
-        parseNode.value.push(contentNode);
-      }
-    } else if (state === "thinking") {
-      const thinkNode = {
-        type: "think",
-        content: buffer,
-        thinking: true,
-      };
-      const lastNode = parseNode.value[parseNode.value.length - 1];
-      if (lastNode?.type === "think") {
-        lastNode.content = buffer;
-      } else {
-        parseNode.value.push(thinkNode);
-      }
-    } else if (state === "finished") {
-      const lastNode = parseNode.value[parseNode.value.length - 1];
-      if (lastNode) {
-        lastNode.thinking = false;
-      }
-    }
+    const nodes = processer(chunk);
+    parseNodes.value = [...nodes];
   }
   isRendering.value = false;
 }
@@ -97,7 +63,7 @@ function changeTheme() {
   switchTheme.value = switchTheme.value === "dark" ? "light" : "dark";
 }
 const remarkPlugins = [remarkMath];
-const rehypePlugins = [rehypeKatex];
+const rehypePlugins: Plugin[] = [rehypeKatex as unknown as Plugin];
 const componentsMap = {
   BarChart,
   Placeholder,
@@ -139,18 +105,13 @@ const codeBlockRenderer = CodeBlockRenderer;
     </div>
     <!-- message -->
     <div>
-      <template v-for="(node, index) in parseNode" :key="index">
-        <Think
-          v-if="node.type === 'think'"
-          :thinkchunk="node.content"
-          :thinking="node.thinking"
-        ></Think>
+      <template v-for="(node, index) in parseNodes" :key="index">
         <article
-          v-if="node.type === 'content'"
+          v-if="typeof node === 'string'"
           class="vue-markdown-wrapper prose prose-slate dark:prose-invert mx-auto my-10"
         >
           <VueMarkdownRenderer
-            :source="node.content"
+            :source="node"
             :theme="switchTheme === 'dark' ? 'light' : 'dark'"
             :components-map
             :code-block-renderer
@@ -161,6 +122,11 @@ const codeBlockRenderer = CodeBlockRenderer;
             :echart-renderer-placeholder="Placeholder"
           ></VueMarkdownRenderer>
         </article>
+        <Think
+          v-else-if="node.type === 'think'"
+          :thinkchunk="node.content"
+          :thinking="!node.finished"
+        ></Think>
       </template>
     </div>
   </div>
