@@ -1,140 +1,208 @@
-export type ParseNode =
-  | string
-  | { type: string; content: string; finished: boolean };
-export function preParseStreamChunk() {
-  let buffer = "";
+type State =
+  | "text"
+  | "symbolMatchingStart"
+  | "symbolContent"
+  | "symbolMatchingEnd";
 
-  const parseNodes: ParseNode[] = [];
-  const transforms = [transformThink()];
+type TextBlock = {
+  type: "text";
+  content: string;
+};
+type SymbolBlock = {
+  type: "symbol";
+  symbol: string;
+  content: string;
+  finished: boolean;
+};
+type Block = TextBlock | SymbolBlock;
 
-  function push(node: ParseNode) {
-    parseNodes.push(node);
+export type ParseNode = Block;
+
+type SplitRule = {
+  start: string;
+  end: string;
+};
+
+export class PreParse {
+  private buffer = "";
+  private index = 0;
+  private state: State = "text";
+  private chunkBlocks: Block[] = [];
+  private currentBlock: Block | null = null;
+  private splitRules: SplitRule[] = [];
+  private matchers: { start: Matcher; end: Matcher }[] = [];
+  private activeMatcher: { start: Matcher; end: Matcher } | null = null;
+  private textStateTryMatchers = new Set<{ start: Matcher; end: Matcher }>();
+
+  constructor() {
+    this.splitRules = [
+      { start: "<think>", end: "</think>" },
+      { start: "<ToolCall>", end: "</ToolCall>" },
+      { start: "<th>", end: "</th>" },
+      { start: "::ToolCall::", end: "::ToolCall::" },
+    ];
+    this.matchers = this.splitRules.map((i) => ({
+      start: new Matcher(i.start),
+      end: new Matcher(i.end),
+    }));
   }
-  function updateLast(node: ParseNode) {
-    parseNodes.splice(parseNodes.length - 1, 1, node);
+
+  appendChunk(chunk: string) {
+    this.buffer += chunk;
+    return this.processChunk();
   }
 
-  function updateTransformResult(
-    type: string,
-    content: string,
-    finished: boolean
-  ) {
-    const last = parseNodes[parseNodes.length - 1];
-    if (last) {
-      if (typeof last !== "string" && last?.type === type) {
-        last.content = content;
-        last.finished = finished;
-      } else {
-        push({ type, content, finished });
+  processChunk() {
+    while (this.index < this.buffer.length) {
+      const currentChar = this.buffer[this.index];
+      switch (this.state) {
+        case "text": {
+          this.stateText(currentChar);
+          break;
+        }
+        case "symbolMatchingStart": {
+          this.stateSymbolMatchingStart(currentChar);
+          break;
+        }
+        case "symbolContent": {
+          this.stateSymbolContent(currentChar);
+          break;
+        }
+        case "symbolMatchingEnd": {
+          this.stateSymbolMatchingEnd(currentChar);
+          break;
+        }
       }
-    } else {
-      push({ type, content, finished });
+      this.index++;
+    }
+    return this.chunkBlocks;
+  }
+
+  getPendingMatchers() {
+    return this.matchers.filter((i) => !this.textStateTryMatchers.has(i));
+  }
+
+  stateText(char: string) {
+    let matched = false;
+    for (const matcher of this.getPendingMatchers()) {
+      const { start: startMatcher } = matcher;
+      const { state } = startMatcher.match(char);
+      if (state === "matching") {
+        this.activeMatcher = matcher;
+        this.textStateTryMatchers.add(matcher);
+        this.state = "symbolMatchingStart";
+        matched = true;
+        return;
+      } else if (state === false) {
+        // 这个 matcher 匹配失败，重置它的状态
+        // 继续尝试下一个 matcher
+        continue;
+      }
+    }
+    // 如果没有任何 matcher 匹配成功，将字符作为文本内容
+    if (!matched) {
+      if (this.currentBlock === null) {
+        this.currentBlock = {
+          type: "text",
+          content: char,
+        };
+        this.chunkBlocks.push(this.currentBlock);
+      } else {
+        this.currentBlock.content += char;
+      }
     }
   }
-  return function processer(chunk: string) {
-    buffer += chunk;
-    for (const transform of transforms) {
-      const { transformResult } = transform(chunk);
-      if (transformResult === null) {
-        updateLast(buffer);
-      } else {
-        const { leading, type, content, tail, finished } = transformResult;
-        if (leading) {
-          updateLast(leading);
-        }
-        updateTransformResult(type, content, finished);
-        if (tail) {
-          push(tail);
-          buffer = tail;
-        }
-      }
+
+  stateSymbolMatchingStart(char: string) {
+    if (!this.activeMatcher) {
+      console.error("internal bug");
+      return;
     }
-    return parseNodes;
-  };
+    const { state, matchedCount } = this.activeMatcher.start.match(char);
+    if (state === false) {
+      this.state = "text";
+      // rollback
+      this.index = this.index - matchedCount - 1;
+    } else if (state === "matching") {
+      //
+    } else if (state === true) {
+      this.state = "symbolContent";
+      this.textStateTryMatchers.clear();
+      this.currentBlock = {
+        type: "symbol",
+        symbol: this.activeMatcher.start.matchstring,
+        content: "",
+        finished: false,
+      };
+
+      this.chunkBlocks.push(this.currentBlock);
+    }
+  }
+
+  stateSymbolContent(char: string) {
+    if (!this.activeMatcher) {
+      console.error("internal bug");
+      return;
+    }
+    const { state } = this.activeMatcher.end.match(char);
+    if (state === false) {
+      this.currentBlock!.content += char;
+    } else if (state === "matching") {
+      this.state = "symbolMatchingEnd";
+    }
+  }
+
+  stateSymbolMatchingEnd(char: string) {
+    if (!this.activeMatcher) {
+      console.error("internal bug");
+      return;
+    }
+    const { state, matchedCount } = this.activeMatcher.end.match(char);
+    if (state === false) {
+      this.state = "symbolContent";
+      const matchedString = this.buffer.slice(
+        this.index - matchedCount,
+        this.index
+      );
+      this.currentBlock!.content += matchedString + char;
+    } else if (state === "matching") {
+      //
+    } else if (state === true) {
+      this.state = "text";
+      const currentBlock = this.currentBlock as SymbolBlock;
+      currentBlock.finished = true;
+      this.currentBlock = null;
+    }
+  }
 }
 
-function transformThink() {
-  const startTag = "<think>";
-  const endTag = "</think>";
-  type State = "before_think_tag" | "in_think_tag" | "after_think_tag";
-  let state: State = "before_think_tag";
-  let interBuffer = "";
-  let content = "";
-  let startIdx = -1;
-  let endIdx = -1;
+type MatchResult =
+  | { state: true; matchedCount: number }
+  | { state: "matching"; matchedCount: number }
+  | { state: false; matchedCount: number };
+class Matcher {
+  private index = 0;
+  constructor(public matchstring: string) {}
 
-  type Result = {
-    state: State;
-    transformResult: {
-      type: "think";
-      leading?: string;
-      content: string;
-      tail?: string;
-      finished: boolean;
-    } | null;
-  };
-  function stateBeforeThinkTag(): Result {
-    startIdx = interBuffer.indexOf(startTag);
-
-    if (startIdx !== -1) {
-      state = "in_think_tag";
-      const leading = interBuffer.slice(0, startIdx);
-      interBuffer = interBuffer.slice(startIdx + startTag.length);
-      return stateInThinkTag(leading);
-    }
-
-    return {
-      state: "before_think_tag",
-      transformResult: null,
-    };
-  }
-  function stateInThinkTag(leading?: string): Result {
-    content = interBuffer;
-    endIdx = interBuffer.indexOf(endTag);
-    if (endIdx !== -1) {
-      state = "after_think_tag";
-      return stateAfterThinkTag(leading);
-    } else {
+  match(char: string): MatchResult {
+    if (char === this.matchstring[this.index]) {
+      this.index++;
+      const matchedCount = this.index;
+      if (this.index === this.matchstring.length) {
+        this.index = 0;
+        return { state: true, matchedCount };
+      }
       return {
-        state: "in_think_tag",
-        transformResult: {
-          type: "think",
-          leading,
-          content,
-          finished: false,
-        },
+        state: "matching",
+        matchedCount,
+      };
+    } else {
+      const matchedCount = this.index;
+      this.index = 0;
+      return {
+        state: false,
+        matchedCount,
       };
     }
   }
-  function stateAfterThinkTag(leading?: string): Result {
-    const tail = interBuffer.slice(endIdx + endTag.length);
-    const result: Result = {
-      state: "after_think_tag",
-      transformResult: {
-        type: "think",
-        leading,
-        content: content.slice(0, endIdx),
-        tail,
-        finished: true,
-      },
-    };
-
-    // reset
-    state = "before_think_tag";
-    interBuffer = tail;
-    content = "";
-    startIdx = -1;
-    endIdx = -1;
-    return result;
-  }
-  return function processer(chunk: string): Result {
-    interBuffer += chunk;
-    if (state === "before_think_tag") {
-      return stateBeforeThinkTag();
-    } else if (state === "in_think_tag") {
-      return stateInThinkTag();
-    } else {
-      return stateAfterThinkTag();
-    }
-  };
 }

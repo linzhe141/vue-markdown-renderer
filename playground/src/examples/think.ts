@@ -6,7 +6,9 @@ The focus is not on technical principles, but on its pervasiveness and irreversi
 By listing multiple application scenarios, it implies that AI’s influence is cross-industry and cross-level, rather than a localized phenomenon.
 </think>
 
+<think>
 In the fields of production and services, artificial intelligence has significantly improved efficiency. Enterprises can make more precise decisions through algorithms, while individuals can use AI tools to accomplish tasks that previously required professional expertise. This “downward shift” of capabilities is reshaping the relationship between humans and technology.
+</think>
 
 <think>
 The core of this paragraph is “efficiency gains + capability democratization,” with the reflection centered on how AI changes labor structures rather than on technical details.
@@ -16,3 +18,12 @@ This also lays the groundwork for later discussion of risks and challenges, maki
 
 However, the development of artificial intelligence also brings new challenges. Issues such as privacy protection, algorithmic bias, and overreliance on machine judgment cannot be ignored. Future societies must find a balance between technological progress and human values, ensuring that AI remains a tool rather than a dominant force.
 `;
+
+// export const md = `bar::ToolCall::yyy::ToolCall::<think>xxx</think>
+// `;
+
+// export const md = `bar<ToolCall>yyy</ToolCall><think>xxx</think>
+// `;
+
+// export const md = `bar<th>yyy</th><think>xxx</think>
+// `;

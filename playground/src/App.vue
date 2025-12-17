@@ -13,10 +13,10 @@ import {
   CodeBlockRenderer,
   EchartRenderer,
   Placeholder,
-  Think,
 } from "./components/markdown";
 import { md as thinkMd } from "./examples/think";
-import { ParseNode, preParseStreamChunk } from "./preParseStreamChunk";
+import Think from "./components/Think.vue";
+import { type ParseNode, PreParse } from "./preParseStreamChunk";
 import { convertLatexDelimiters, createStream } from "./utils";
 
 const IS_THINK_DEMO = new URLSearchParams(location.search).get("thinkdemo");
@@ -37,15 +37,15 @@ async function clickHandle() {
     formatMd = convertLatexDelimiters(md);
   }
 
-  const stream = createStream(formatMd, 30, 50);
+  const stream = createStream(formatMd, 2, 0);
   // ios 不支持 Symbol.asyncIterator
   const reader = stream.getReader();
 
-  const processer = preParseStreamChunk();
+  const parser = new PreParse();
   while (true) {
     const { done, value: chunk } = await reader.read();
     if (done) break;
-    const nodes = processer(chunk);
+    const nodes = parser.appendChunk(chunk);
     parseNodes.value = [...nodes];
   }
   isRendering.value = false;
@@ -107,11 +107,11 @@ const codeBlockRenderer = CodeBlockRenderer;
     <div>
       <template v-for="(node, index) in parseNodes" :key="index">
         <article
-          v-if="typeof node === 'string'"
+          v-if="node.type === 'text'"
           class="vue-markdown-wrapper prose prose-slate dark:prose-invert mx-auto my-10"
         >
           <VueMarkdownRenderer
-            :source="node"
+            :source="node.content"
             :theme="switchTheme === 'dark' ? 'light' : 'dark'"
             :components-map
             :code-block-renderer
@@ -122,11 +122,13 @@ const codeBlockRenderer = CodeBlockRenderer;
             :echart-renderer-placeholder="Placeholder"
           ></VueMarkdownRenderer>
         </article>
-        <Think
-          v-else-if="node.type === 'think'"
-          :thinkchunk="node.content"
-          :thinking="!node.finished"
-        ></Think>
+        <template v-if="node.type === 'symbol'">
+          <Think
+            v-if="node.symbol === '<think>'"
+            :thinkchunk="node.content"
+            :thinking="!node.finished"
+          ></Think>
+        </template>
       </template>
     </div>
   </div>
