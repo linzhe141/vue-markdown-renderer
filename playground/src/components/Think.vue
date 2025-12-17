@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import { VueMarkdownRenderer } from "../../../../src";
+import { VueMarkdownRenderer } from "../../../src";
 
 const props = defineProps({
   thinkchunk: String,

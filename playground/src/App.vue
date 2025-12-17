@@ -1,103 +1,58 @@
-<script setup>
+<script setup lang="ts">
 import { VueMarkdownRenderer } from "../../src";
-import { onMounted, ref, shallowRef } from "vue";
+import { type Plugin } from "unified";
+import { onMounted, ref } from "vue";
 import "./animation.css";
 import Button from "./components/Button.vue";
 import java from "@shikijs/langs/java";
 import "katex/dist/katex.min.css";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
-import BarChart from "./components/markdown/BarChart.vue";
-import Placeholder from "./components/markdown/Placeholder.vue";
-import CodeBlockRendererComp from "./components/markdown/CodeBlockRenderer.vue";
-import EchartRenderer from "./components/markdown/EchartRenderer.vue";
-import { transformThink } from "./transfrom/think/think";
-import Think from "./transfrom/think/Think.vue";
-import { md } from "./md";
-const IS_DEMO = new URLSearchParams(location.search).get("demo");
-function createStream(text, chunkSize = 2, delay = 10) {
-  let position = 0;
-  return new ReadableStream({
-    pull(controller) {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          if (position >= text.length) {
-            controller.close();
-            resolve();
-            return;
-          }
+import {
+  BarChart,
+  CodeBlockRenderer,
+  EchartRenderer,
+  Placeholder,
+} from "./components/markdown";
+import { md as thinkMd } from "./examples/think";
+import Think from "./components/Think.vue";
+import { type ParseNode, PreParse } from "./preParseStreamChunk";
+import { convertLatexDelimiters, createStream } from "./utils";
 
-          const chunk = text.slice(position, position + chunkSize);
-          position += chunkSize;
-          controller.enqueue(chunk);
+const IS_THINK_DEMO = new URLSearchParams(location.search).get("thinkdemo");
 
-          resolve();
-        }, delay);
-      });
-    },
-  });
-}
-const mdText = ref("");
-const thinkText = ref("");
-// 如果开启think 模式，这个状态必须是true，就是默认先进入think状态
-const thinking = ref(true);
-const isRender = ref(true);
+const isRendering = ref(true);
+
+const parseNodes = ref<ParseNode[]>([]);
 
 async function clickHandle() {
-  mdText.value = "";
-  isRender.value = true;
+  isRendering.value = true;
   let formatMd = "";
-  if (IS_DEMO) {
-    formatMd = convertLatexDelimiters(md);
+  parseNodes.value = [];
+  if (IS_THINK_DEMO) {
+    formatMd = convertLatexDelimiters(thinkMd);
   } else {
     const res = await fetch("./md.md");
     const md = await res.text();
     formatMd = convertLatexDelimiters(md);
   }
 
-  const stream = createStream(formatMd);
+  const stream = createStream(formatMd, 2, 0);
   // ios 不支持 Symbol.asyncIterator
   const reader = stream.getReader();
 
-  const processThink = transformThink();
+  const parser = new PreParse();
   while (true) {
     const { done, value: chunk } = await reader.read();
     if (done) break;
-    if (!thinking.value) {
-      mdText.value += chunk;
-    }
-    const thinkResult = processThink(chunk);
-    if (thinkResult) {
-      const { done, buffer, rest } = thinkResult;
-      thinking.value = !done;
-      thinkText.value = buffer;
-      // 如果思考完成了，但是还有剩余的文本，需要放到正文里面
-      if (done && rest) {
-        mdText.value = rest;
-      }
-    }
+    const nodes = parser.appendChunk(chunk);
+    parseNodes.value = [...nodes];
   }
-  isRender.value = false;
+  isRendering.value = false;
 }
 
 onMounted(clickHandle);
-function convertLatexDelimiters(text) {
-  const pattern =
-    /(```[\S\s]*?```|`.*?`)|\\\[([\S\s]*?[^\\])\\]|\\\((.*?)\\\)/g;
-  return text.replaceAll(
-    pattern,
-    (match, codeBlock, squareBracket, roundBracket) => {
-      if (codeBlock !== undefined) {
-        return codeBlock;
-      } else if (squareBracket !== undefined) {
-        return `$$${squareBracket}$$`;
-      } else if (roundBracket !== undefined) {
-        return `$${roundBracket}$`;
-      }
-      return match;
-    }
-  );
-}
+
 const switchTheme = ref("dark");
 function changeTheme() {
   if (switchTheme.value === "dark") {
@@ -108,13 +63,13 @@ function changeTheme() {
   switchTheme.value = switchTheme.value === "dark" ? "light" : "dark";
 }
 const remarkPlugins = [remarkMath];
-const rehypePlugins = [rehypeKatex];
+const rehypePlugins: Plugin[] = [rehypeKatex as unknown as Plugin];
 const componentsMap = {
   BarChart,
   Placeholder,
 };
 const extraLangs = [java];
-const codeBlockRenderer = CodeBlockRendererComp;
+const codeBlockRenderer = CodeBlockRenderer;
 </script>
 
 <template>
@@ -128,7 +83,9 @@ const codeBlockRenderer = CodeBlockRendererComp;
       "
       class="p-2"
     >
-      <Button @click="clickHandle" :disabled="isRender">re-grenerate ~</Button>
+      <Button @click="clickHandle" :disabled="isRendering"
+        >re-grenerate ~</Button
+      >
       <a href="https://github.com/linzhe141/vue-markdown-renderer">
         <svg
           class="fill-black dark:fill-white"
@@ -148,26 +105,31 @@ const codeBlockRenderer = CodeBlockRendererComp;
     </div>
     <!-- message -->
     <div>
-      <Think
-        v-if="thinkText"
-        :thinkchunk="thinkText"
-        :thinking="thinking"
-      ></Think>
-      <article
-        class="vue-markdown-wrapper prose prose-slate dark:prose-invert mx-auto my-10"
-      >
-        <VueMarkdownRenderer
-          :source="mdText"
-          :theme="switchTheme === 'dark' ? 'light' : 'dark'"
-          :components-map
-          :code-block-renderer
-          :extra-langs
-          :remark-plugins
-          :rehype-plugins
-          :echart-renderer="EchartRenderer"
-          :echart-renderer-placeholder="Placeholder"
-        ></VueMarkdownRenderer>
-      </article>
+      <template v-for="(node, index) in parseNodes" :key="index">
+        <article
+          v-if="node.type === 'text'"
+          class="vue-markdown-wrapper prose prose-slate dark:prose-invert mx-auto my-10"
+        >
+          <VueMarkdownRenderer
+            :source="node.content"
+            :theme="switchTheme === 'dark' ? 'light' : 'dark'"
+            :components-map
+            :code-block-renderer
+            :extra-langs
+            :remark-plugins
+            :rehype-plugins
+            :echart-renderer="EchartRenderer"
+            :echart-renderer-placeholder="Placeholder"
+          ></VueMarkdownRenderer>
+        </article>
+        <template v-if="node.type === 'symbol'">
+          <Think
+            v-if="node.symbol === '<think>'"
+            :thinkchunk="node.content"
+            :thinking="!node.finished"
+          ></Think>
+        </template>
+      </template>
     </div>
   </div>
 </template>
