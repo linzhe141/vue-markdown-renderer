@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import { VueMarkdownRenderer } from "../../../src";
+import { MarkdownRenderer } from "./markdown/MarkdownRenderer";
 
 const props = defineProps({
   thinkchunk: String,
@@ -49,7 +49,7 @@ const collapsed = ref(false);
         :class="{ 'h-0 overflow-hidden': collapsed }"
         class="vue-markdown-wrapper prose prose-slate dark:prose-invert max-w-full text-[12px]"
       >
-        <VueMarkdownRenderer :source="thinkchunk" :theme="'light'" />
+        <MarkdownRenderer :source="thinkchunk" :theme="'light'" />
       </article>
     </div>
   </div>

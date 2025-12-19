@@ -1,2 +1,2 @@
-import VueMarkdownRenderer from "./core/VueMarkdownRenderer.js";
-export { VueMarkdownRenderer };
+import { createMarkdownRenderer } from "./core/apiCreateMarkdownRender.js";
+export { createMarkdownRenderer };

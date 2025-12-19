@@ -1,6 +1,6 @@
 import { visit } from "unist-util-visit";
-import { computed, defineComponent, h } from "vue";
-import { useProxyProps } from "../useProxyProps.js";
+import { defineComponent, h, inject } from "vue";
+import { ApiOptions } from "../apiCreateMarkdownRender.js";
 
 export const remarkEchartCodeBlock = () => {
   return (tree) => {
@@ -53,13 +53,13 @@ export const remarkEchartCodeBlock = () => {
 const EchartWrapper = defineComponent({
   props: ["optionJson"],
   setup(props) {
-    const proxyProps = useProxyProps();
-    const echartRenderer = computed(() => proxyProps.echartRenderer);
+    const options = inject("markdown-renderer-options") as ApiOptions;
+    const EchartRenderer = options.echart?.renderer;
     return () => {
-      if (!echartRenderer.value) {
+      if (!EchartRenderer) {
         throw new Error(`echartRenderer must be provided`);
       }
-      return h(echartRenderer.value!, {
+      return h(EchartRenderer, {
         option: JSON.parse(props.optionJson),
       });
     };
@@ -85,16 +85,13 @@ export const EchartCodeBlock = defineComponent({
     },
   },
   setup(props) {
-    const proxyProps = useProxyProps();
-    const echartRendererPlaceholder = computed(
-      () => proxyProps.echartRendererPlaceholder
-    );
-
+    const options = inject("markdown-renderer-options") as ApiOptions;
+    const EchartRendererPlaceholder = options.echart?.placeholder;
     return () => {
       const node = props.node;
       const placeholder = node.properties.placeholder;
       if (placeholder) {
-        return h(echartRendererPlaceholder.value || Placeholder);
+        return h(EchartRendererPlaceholder || Placeholder);
       }
 
       return h(EchartWrapper, {

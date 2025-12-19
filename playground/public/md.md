@@ -10,20 +10,29 @@ Overall, VueMarkdownRenderer combines flexibility, performance, and rich feature
 
 # VueMarkdownRenderer
 
-A Vue.js markdown component with enhanced features, utilizing efficient DOM rendering through Vue's virtual DOM.
+A **config-driven**, high-performance Markdown renderer for Vue, designed for **LLM streaming**, **rich code blocks**, and **embedded visual components**.
 
 [live demo](https://linzhe141.github.io/vue-markdown-renderer/)
 
-## Features
+---
 
-- Vue-powered rendering engine for optimal DOM updates
-- Syntax highlighting power by shiki
-- Seamless Vue.js integration
-- Vercel theme code blocks support dark and light mode
-- Support rendering Vue components using `component-json` code blocks
-- Support rendering echart options using `echarts` code blocks
-- Extensible LaTeX support through remark-math and rehype-katex — simply pass them as plugins
-- Custom code block renderer support via codeBlockRenderer prop — enables full control over how specific code blocks are rendered, with access to highlightVnode and language props
+## Core Idea
+
+Unlike traditional Markdown components that rely on many reactive props,
+**VueMarkdownRenderer uses a single static configuration to define rendering behavior**.
+
+```ts
+const MarkdownRenderer = createMarkdownRenderer(config);
+```
+
+* Rendering capabilities are defined **once**
+* The returned renderer component is **pure and predictable**
+* Avoids the mental overhead of “is this prop reactive?”
+
+This design is intentional:
+**99% of Markdown rendering scenarios do not require runtime mutation of render rules.**
+
+---
 
 ## Installation
 
@@ -31,257 +40,172 @@ A Vue.js markdown component with enhanced features, utilizing efficient DOM rend
 npm install vue-mdr
 ```
 
-## Usage
+---
 
-You can add css animations for `.text-segmenter` and `shiki-stream token` to improve user experience like LLM outputs.
+## Basic Usage
 
-```css
-/* animation.css */
-.vue-markdown-wrapper > *,
-.vue-markdown-wrapper .text-segmenter,
-.vue-markdown-wrapper .shiki-stream span {
-  animation: fade-in 0.5s ease-in-out;
-}
-
-@keyframes fade-in {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
+```ts
+import { createMarkdownRenderer } from "vue-mdr";
 ```
 
-then use this animation, And you can also use @tailwindcss/typography, or other typography tools to beautify the page.
+```ts
+export const MarkdownRenderer = createMarkdownRenderer({
+  // configuration here
+});
+```
 
-````vue
-<script setup>
-import { VueMarkdownRenderer } from "../../src";
-import { onMounted, ref } from "vue";
-import "./animation.css";
-import Button from "./Button.vue";
-// add extrl lang for code block
-import java from "@shikijs/langs/java";
-// support latex
+```vue
+<template>
+  <MarkdownRenderer :source="markdownText" />
+</template>
+```
+
+---
+
+## Full Configuration Example
+
+Below is a **complete example** matching the latest API design.
+
+```ts
+import { createMarkdownRenderer } from "vue-mdr";
+
 import "katex/dist/katex.min.css";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
-// support vue-components
-import BarChart from "./BarChart.vue";
+import type { Plugin } from "unified";
 
-function createStream(text, chunkSize = 15, delay = 50) {
-  let position = 0;
+import {
+  BarChart,
+  CodeBlockRenderer,
+  MermaidRenderer,
+  EchartRenderer,
+  Placeholder,
+} from "./components";
 
-  return new ReadableStream({
-    pull(controller) {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          if (position >= text.length) {
-            controller.close();
-            resolve();
-            return;
-          }
-          const chunk = text.slice(position, position + chunkSize);
-          position += chunkSize;
-          controller.enqueue(chunk);
-          resolve();
-        }, delay);
-      });
-    },
-  });
-}
-const mdText = ref("");
-const isRender = ref(true);
+export const MarkdownRenderer = createMarkdownRenderer({
+  /**
+   * Custom Vue components rendered via `component-json` blocks
+   */
+  componentsMap: {
+    BarChart,
+    Placeholder,
+  },
 
-async function clickHandle() {
-  mdText.value = "";
-  isRender.value = true;
-  const res = await fetch("./md.md");
-  const md = await res.text();
-  const stream = createStream(convertLatexDelimiters(md));
-  for await (const chunk of stream) {
-    mdText.value += chunk;
-  }
-  isRender.value = false;
-}
+  /**
+   * Custom code block renderer
+   */
+  codeBlock: {
+    renderer: CodeBlockRenderer,
+  },
 
-onMounted(clickHandle);
+  /**
+   * ECharts support
+   */
+  echart: {
+    renderer: EchartRenderer,
+    placeholder: Placeholder,
+  },
 
-function convertLatexDelimiters(text) {
-  const pattern =
-    /(```[\S\s]*?```|`.*?`)|\\\[([\S\s]*?[^\\])\\]|\\\((.*?)\\\)/g;
-  return text.replaceAll(
-    pattern,
-    (match, codeBlock, squareBracket, roundBracket) => {
-      if (codeBlock !== undefined) {
-        return codeBlock;
-      } else if (squareBracket !== undefined) {
-        return `$$${squareBracket}$$`;
-      } else if (roundBracket !== undefined) {
-        return `$${roundBracket}$`;
-      }
-      return match;
-    }
-  );
-}
+  /**
+   * Mermaid diagrams
+   */
+  mermaid: {
+    renderer: MermaidRenderer,
+  },
 
-const switchTheme = ref("dark");
-
-function changeTheme() {
-  if (switchTheme.value === "dark") {
-    document.documentElement.classList.add("dark");
-  } else {
-    document.documentElement.classList.remove("dark");
-  }
-  switchTheme.value = switchTheme.value === "dark" ? "light" : "dark";
-}
-</script>
-
-<template>
-  <div>
-    <article
-      class="vue-markdown-wrapper prose prose-slate dark:prose-invert mx-auto my-10"
-    >
-      <VueMarkdownRenderer
-        :source="mdText"
-        :extra-langs="[java]"
-        :theme="switchTheme === 'dark' ? 'light' : 'dark'"
-        :remark-plugins="[remarkMath]"
-        :rehype-plugins="[rehypeKatex]"
-        :components-map="{
-          BarChart,
-        }"
-      ></VueMarkdownRenderer>
-    </article>
-  </div>
-</template>
-````
-
-### Custom Code Block Rendering
-
-You can take full control over how code blocks are rendered by passing a `codeBlockRenderer` component to the `VueMarkdownRenderer`. This component receives two props:
-
-- `highlightVnode`: a `VNode` containing the syntax-highlighted content powered by Shiki.
-- `language`: a `string` representing the detected language of the code block.
-
-This is useful when you want to add features like copy buttons, custom themes, header labels, or animations around your code blocks.
-
-Example Usage
-
-```vue
-<VueMarkdownRenderer
-  :source="mdText"
-  :code-block-renderer="CodeBlockRenderer"
-  :theme="switchTheme === 'dark' ? 'light' : 'dark'"
-/>
+  /**
+   * Markdown / HTML plugins
+   */
+  remarkPlugins: [remarkMath],
+  rehypePlugins: [rehypeKatex as unknown as Plugin],
+});
 ```
 
-```vue
-<script setup lang="ts">
-import { ref, computed, VNode } from "vue";
+---
 
-const props = defineProps<{
+## Design Philosophy
+
+### 1. Static Configuration over Reactive Props
+
+```ts
+createMarkdownRenderer({
+  mermaid: { renderer },
+  echart: { renderer },
+  codeBlock: { renderer },
+});
+```
+
+* No runtime mutation
+* No watchers
+* No ambiguous reactivity expectations
+
+> The renderer is **configured**, not **controlled**.
+
+---
+
+### 2. Capability-based Rendering
+
+Each feature is **opt-in**:
+
+| Feature        | Config Key                        |
+| -------------- | --------------------------------- |
+| Code blocks    | `codeBlock`                       |
+| Mermaid        | `mermaid`                         |
+| ECharts        | `echart`                          |
+| Vue components | `componentsMap`                   |
+| LaTeX          | `remarkPlugins` / `rehypePlugins` |
+
+If you don’t configure it, it doesn’t exist.
+
+---
+
+## Custom Code Block Rendering
+
+Your `CodeBlockRenderer` receives:
+
+```ts
+interface Props {
   highlightVnode: VNode;
   language: string;
-}>();
-
-const copied = ref(false);
-const contentRef = ref<HTMLElement>();
-
-function copyHandle() {
-  if (!contentRef.value) return;
-  navigator.clipboard.writeText(contentRef.value.textContent || "");
-  copied.value = true;
-  setTimeout(() => (copied.value = false), 2000);
 }
-
-const langLabel = computed(() => props.language?.toUpperCase() || "TEXT");
-</script>
-
-<template>
-  <div
-    class="relative my-4 w-0 min-w-full overflow-hidden rounded-lg bg-[#ededed] text-sm shadow dark:bg-[#171717]"
-  >
-    <!-- Header bar -->
-    <div
-      class="flex items-center justify-between bg-[#2f2f2f] p-2 text-[#cdcdcd]"
-    >
-      <span class="text-xs uppercase tracking-wider text-gray-400">
-        {{ langLabel }}
-      </span>
-      <div class="relative cursor-pointer p-1" @click="copyHandle">
-        <template v-if="copied">
-          <div class="absolute -left-16 -top-6 z-10">
-            <pre
-              class="rounded bg-slate-100 px-2 py-1 text-sm text-green-500 dark:bg-black"
-            >
-Copied!</pre
-            >
-          </div>
-          <svg
-            class="h-4 w-4 text-gray-300"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-          >
-            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-          </svg>
-        </template>
-        <template v-else>
-          <svg
-            class="h-4 w-4 text-gray-300"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-          >
-            <path
-              d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 18H8V7h11v16z"
-            />
-          </svg>
-        </template>
-      </div>
-    </div>
-
-    <!-- Code block -->
-    <div
-      ref="contentRef"
-      class="not-prose overflow-auto px-3 py-2 font-mono leading-relaxed text-gray-100"
-    >
-      <component :is="props.highlightVnode" />
-    </div>
-  </div>
-</template>
 ```
 
-This gives you complete flexibility over how code blocks appear and behave in your markdown rendering flow — great for documentation platforms, MDX-like previews, or blogging engines.
+This allows you to implement:
 
-### Supports rendering custom Vue components through component-json code blocks. Each code block should contain a JSON object with the following structure:
+* Copy buttons
+* Language labels
+* Custom headers
+* Animations
+* Streaming-friendly UI
 
-- type: The key in componentsMap that corresponds to a registered Vue component.
+```ts
+codeBlock: {
+  renderer: CodeBlockRenderer,
+}
+```
 
-- props: An object containing the props to be passed to that component.
+---
 
-Additionally, the code block's meta information can include:
-
-- placeholder (optional): Specifies a placeholder Vue component to render before the JSON content is fully parsed. For example: {"placeholder": "LoadingSkeleton"}.
-
-If no placeholder is specified, a default fallback will be rendered `h("div", { class: "vue-mdr-default-component-placeholder" })`.
+## Rendering Vue Components (`component-json`)
 
 ````markdown
 ```component-json {"placeholder": "Placeholder"}
-{"type":"BarChart","props":{"chartData":{"categories":["type1","type2","type3","type4","type5","type6","type7","type8","type9","type10","type11","type12","type13","type14","type15","type16","type17","type18","type19","type20"],"seriesData":[100,200,150,180,120,130,170,160,190,210,220,140,125,155,165,175,185,195,205,215]}}}
+{
+  "type": "BarChart",
+  "props": {
+    "chartData": {
+      "categories": ["A", "B", "C"],
+      "seriesData": [10, 20, 30]
+    }
+  }
+}
 ```
-````
 
+````
 ```component-json {"placeholder": "Placeholder"}
 {"type":"BarChart","props":{"chartData":{"categories":["type1","type2","type3","type4","type5","type6","type7","type8","type9","type10","type11","type12","type13","type14","type15","type16","type17","type18","type19","type20"],"seriesData":[100,200,150,180,120,130,170,160,190,210,220,140,125,155,165,175,185,195,205,215]}}}
 ```
-
-### Supports rendering ECharts code blocks
-
-In addition to `component-json` code blocks, you can directly render ECharts.
-The content of the code block should be a valid ECharts configuration object (`option`).
-
-#### Usage
+## Rendering ECharts
 
 ````markdown
 ```echarts
@@ -333,7 +257,17 @@ The content of the code block should be a valid ECharts configuration object (`o
   ]
 }
 ```
+
 ````
+
+Configuration:
+
+```ts
+echart: {
+  renderer: EchartRenderer,
+  placeholder: Placeholder,
+}
+```
 ```echarts
 {
   "title": {
@@ -383,36 +317,37 @@ The content of the code block should be a valid ECharts configuration object (`o
   ]
 }
 ```
-#### Placeholder Support
 
-If you want to show a placeholder while rendering the chart, you can set the `:echart-renderer-placeholder` prop in `<VueMarkdownRenderer>`:
+---
 
-```vue
-<VueMarkdownRenderer
-  :source="mdText"
-  :theme="switchTheme === 'dark' ? 'light' : 'dark'"
-  :echart-renderer="EchartRenderer"
-  :echart-renderer-placeholder="Placeholder"
-/>
+## Mermaid Diagrams
+
+````markdown
+```mermaid
+sequenceDiagram
+  Alice->>Bob: Hello
+  Bob-->>Alice: Hi!
 ```
+````
 
-If no placeholder is specified, a default fallback will be rendered:
-
-```js
-h("div", { class: "vue-mdr-default-echart-placeholder" })
-```
-
-### extra lang `java`
-
-```java
-public class HelloWorld {
-    public static void main(String[] args) {
-        System.out.println("Hello, world!");
-    }
+```ts
+mermaid: {
+  renderer: MermaidRenderer,
 }
 ```
+```mermaid
+sequenceDiagram
+  Alice->>Bob: Hello
+  Bob-->>Alice: Hi!
+```
+---
 
-### test latex render
+## LaTeX Support
+
+```ts
+remarkPlugins: [remarkMath],
+rehypePlugins: [rehypeKatex],
+```
 
 $$
 \begin{align}
@@ -423,7 +358,3 @@ $$
 \end{align}
 $$
 
-
-### test image render
-
-![img](https://github.com/user-attachments/assets/01b679c8-681c-4ce0-bcce-91742b40e7b4)

@@ -18,6 +18,7 @@ export const defaultLangs = {
   python: import("@shikijs/langs/python"),
   go: import("@shikijs/langs/go"),
   rust: import("@shikijs/langs/rust"),
+  java: import("@shikijs/langs/java"),
 };
 
 export async function initShikiHighlighter() {

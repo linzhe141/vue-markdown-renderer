@@ -1,35 +1,17 @@
-import {
-  h,
-  defineComponent,
-  type PropType,
-  computed,
-  type Component,
-} from "vue";
+import { h, defineComponent, type PropType, computed, inject } from "vue";
 import { Fragment } from "vue/jsx-runtime";
 import { toJsxRuntime } from "hast-util-to-jsx-runtime";
-import remarkParse from "remark-parse";
-import remarkRehype from "remark-rehype";
-import remarkGfm from "remark-gfm";
+
 import { VFile } from "vfile";
-import { unified, type Plugin } from "unified";
+import { type Processor } from "unified";
 import { segmentTextComponents } from "./segmentText.js";
 import { ShikiProvider } from "./ShikiProvider.js";
-import { Langs } from "./highlight/shiki.js";
-import {
-  remarkComponentCodeBlock,
-  ComponentCodeBlock,
-} from "./plugin/remarkComponentCodeBlock.js";
-import {
-  remarkEchartCodeBlock,
-  EchartCodeBlock,
-} from "./plugin/remarkEchartCodeBlock.js";
+import { ComponentCodeBlock } from "./plugin/remarkComponentCodeBlock.js";
+import { EchartCodeBlock } from "./plugin/remarkEchartCodeBlock.js";
+import { MermaidRenderer } from "./plugin/remarkMermaidCodeBlock.js";
+
 import { ShikiStreamCodeBlock } from "./ShikiStreamCodeBlock.js";
 import { provideProxyProps } from "./useProxyProps.js";
-
-interface RemarkRehypeOptions {
-  allowDangerousHtml?: boolean;
-  [key: string]: any;
-}
 
 function jsx(type: any, props: Record<any, any>, key: any) {
   const { children } = props;
@@ -62,52 +44,17 @@ export default defineComponent({
       type: String as PropType<"light" | "dark">,
       required: true,
     },
-    componentsMap: {
-      type: Object as PropType<Record<string, Component>>,
-    },
-    codeBlockRenderer: {
-      type: Object as PropType<Component>,
-    },
-    echartRenderer: {
-      type: Object as PropType<Component>,
-    },
-    echartRendererPlaceholder: {
-      type: Object as PropType<Component>,
-    },
-    extraLangs: {
-      type: Array as PropType<Langs[]>,
-      default: () => [],
-    },
-    rehypePlugins: {
-      type: Array as PropType<Plugin[]>,
-      default: () => [],
-    },
-    remarkPlugins: {
-      type: Array as PropType<Plugin[]>,
-      default: () => [],
-    },
-    remarkRehypeOptions: {
-      type: Object as PropType<RemarkRehypeOptions>,
-      default: () => ({ allowDangerousHtml: true }),
-    },
   },
   errorCaptured(e) {
     console.error("VueMarkdownRenderer captured error", e);
   },
   setup(props) {
+    const processor = inject("markdown-renderer-processor") as Processor<
+      any,
+      any,
+      any
+    >;
     provideProxyProps(props);
-    const computedProcessor = computed(() => {
-      const { rehypePlugins, remarkPlugins, remarkRehypeOptions } = props;
-      const processor = unified()
-        .use(remarkParse)
-        .use(remarkGfm)
-        .use(remarkComponentCodeBlock)
-        .use(remarkEchartCodeBlock)
-        .use(remarkPlugins)
-        .use(remarkRehype, remarkRehypeOptions)
-        .use(rehypePlugins);
-      return processor;
-    });
 
     const createFile = (md: string) => {
       const file = new VFile();
@@ -122,6 +69,7 @@ export default defineComponent({
           ComponentCodeBlock,
           EchartCodeBlock,
           pre: ShikiStreamCodeBlock,
+          MermaidRenderer,
         },
         Fragment,
         jsx: jsx,
@@ -133,7 +81,6 @@ export default defineComponent({
     };
 
     const computedVNode = computed(() => {
-      const processor = computedProcessor.value;
       const file = createFile(props.source);
       return generateVueNode(processor.runSync(processor.parse(file), file));
     });
