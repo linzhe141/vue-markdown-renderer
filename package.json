@@ -1,6 +1,6 @@
 {
   "name": "vue-mdr",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "type": "module",
   "description": "Tranform markdown string to vue component with `mdast-> hast-> vue node`",
   "exports": {
