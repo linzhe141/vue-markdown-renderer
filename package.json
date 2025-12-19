@@ -49,6 +49,7 @@
     "@shikijs/langs": "^3.6.0",
     "@shikijs/themes": "^3.6.0",
     "hast-util-to-jsx-runtime": "^2.3.6",
+    "mermaid": "^11.12.2",
     "remark-gfm": "^4.0.1",
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.2",

@@ -1,9 +1,10 @@
-import { computed, defineComponent, h } from "vue";
+import { computed, defineComponent, h, inject } from "vue";
 import { ShikiCachedRenderer } from "shiki-stream/vue";
 import { useShiki } from "./ShikiProvider.js";
 import { THEME } from "./highlight/codeTheme.js";
 import { ElementNode } from "./segmentText.js";
 import { useProxyProps } from "./useProxyProps.js";
+import { ApiOptions } from "./apiCreateMarkdownRender.js";
 
 const FALLBACK_LANG = "ts";
 
@@ -18,9 +19,9 @@ export const ShikiStreamCodeBlock = defineComponent({
   setup(props) {
     const proxyProps = useProxyProps();
     const { highlighter } = useShiki();
-    const computedCodeBlockRenderer = computed(
-      () => proxyProps.codeBlockRenderer
-    );
+    const { codeBlock } = inject("markdown-renderer-options") as ApiOptions;
+
+    const CodeBlockRenderer = codeBlock?.renderer;
     const themeStyle = computed(() => {
       const theme = proxyProps.theme;
       return THEME[theme];
@@ -105,8 +106,8 @@ export const ShikiStreamCodeBlock = defineComponent({
         },
       });
 
-      if (computedCodeBlockRenderer.value) {
-        return h(computedCodeBlockRenderer.value, {
+      if (CodeBlockRenderer) {
+        return h(CodeBlockRenderer, {
           highlightVnode,
           language,
         });

@@ -1,23 +1,12 @@
 <script setup lang="ts">
-import { VueMarkdownRenderer } from "../../src";
-import { type Plugin } from "unified";
 import { onMounted, ref } from "vue";
 import "./animation.css";
 import Button from "./components/Button.vue";
-import java from "@shikijs/langs/java";
-import "katex/dist/katex.min.css";
-import remarkMath from "remark-math";
-import rehypeKatex from "rehype-katex";
-import {
-  BarChart,
-  CodeBlockRenderer,
-  EchartRenderer,
-  Placeholder,
-} from "./components/markdown";
 import { md as thinkMd } from "./examples/think";
 import Think from "./components/Think.vue";
 import { type ParseNode, PreParse } from "./preParseStreamChunk";
 import { convertLatexDelimiters, createStream } from "./utils";
+import { MarkdownRenderer } from "./components/markdown/MarkdownRenderer";
 
 const IS_THINK_DEMO = new URLSearchParams(location.search).get("thinkdemo");
 
@@ -37,7 +26,7 @@ async function clickHandle() {
     formatMd = convertLatexDelimiters(md);
   }
 
-  const stream = createStream(formatMd, 2, 0);
+  const stream = createStream(formatMd, 40, 100);
   // ios 不支持 Symbol.asyncIterator
   const reader = stream.getReader();
 
@@ -62,14 +51,6 @@ function changeTheme() {
   }
   switchTheme.value = switchTheme.value === "dark" ? "light" : "dark";
 }
-const remarkPlugins = [remarkMath];
-const rehypePlugins: Plugin[] = [rehypeKatex as unknown as Plugin];
-const componentsMap = {
-  BarChart,
-  Placeholder,
-};
-const extraLangs = [java];
-const codeBlockRenderer = CodeBlockRenderer;
 </script>
 
 <template>
@@ -110,17 +91,10 @@ const codeBlockRenderer = CodeBlockRenderer;
           v-if="node.type === 'text'"
           class="vue-markdown-wrapper prose prose-slate dark:prose-invert mx-auto my-10"
         >
-          <VueMarkdownRenderer
+          <MarkdownRenderer
             :source="node.content"
             :theme="switchTheme === 'dark' ? 'light' : 'dark'"
-            :components-map
-            :code-block-renderer
-            :extra-langs
-            :remark-plugins
-            :rehype-plugins
-            :echart-renderer="EchartRenderer"
-            :echart-renderer-placeholder="Placeholder"
-          ></VueMarkdownRenderer>
+          ></MarkdownRenderer>
         </article>
         <template v-if="node.type === 'symbol'">
           <Think
