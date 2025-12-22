@@ -3,14 +3,15 @@ import "katex/dist/katex.min.css";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import { type Plugin } from "unified";
-
 import {
   BarChart,
   CodeBlockRenderer,
   MermaidRenderer,
   EchartRenderer,
+  TableRenderer,
   Placeholder,
 } from ".";
+
 export const MarkdownRenderer = createMarkdownRenderer({
   componentsMap: {
     BarChart,
@@ -26,6 +27,9 @@ export const MarkdownRenderer = createMarkdownRenderer({
   mermaid: {
     renderer: MermaidRenderer,
   },
+  // table: {
+  //   renderer: TableRenderer,
+  // },
   remarkPlugins: [remarkMath],
   rehypePlugins: [rehypeKatex as unknown as Plugin],
 });

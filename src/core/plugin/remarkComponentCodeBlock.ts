@@ -8,40 +8,40 @@ export const remarkComponentCodeBlock = () => {
       if (node.lang === "component-json") {
         if (!node.meta) {
           // 默认的placeholder
-          const placeholder = {
-            type: "ComponentCodeBlock",
+          const componentCodeBlockRenderer = {
+            type: "ComponentCodeBlockRenderer",
             data: {
-              hName: "ComponentCodeBlock",
+              hName: "ComponentCodeBlockRenderer",
               hProperties: {
                 placeholder: "vue-mdr-default-component-placeholder-key",
               },
             },
           };
-          parent.children.splice(index, 1, placeholder);
+          parent.children.splice(index, 1, componentCodeBlockRenderer);
         }
         try {
           const meta = JSON.parse(node.meta);
           try {
             const data = JSON.parse(node.value);
-            const componentCodeBlock = {
-              type: "ComponentCodeBlock",
+            const componentCodeBlockRenderer = {
+              type: "ComponentCodeBlockRenderer",
               data: {
-                hName: "ComponentCodeBlock",
+                hName: "ComponentCodeBlockRenderer",
                 hProperties: data,
               },
             };
-            parent.children.splice(index, 1, componentCodeBlock);
+            parent.children.splice(index, 1, componentCodeBlockRenderer);
           } catch (e) {
-            const placeholder = {
-              type: "ComponentCodeBlock",
+            const componentCodeBlockRenderer = {
+              type: "ComponentCodeBlockRenderer",
               data: {
-                hName: "ComponentCodeBlock",
+                hName: "ComponentCodeBlockRenderer",
                 hProperties: {
                   placeholder: meta.placeholder,
                 },
               },
             };
-            parent.children.splice(index, 1, placeholder);
+            parent.children.splice(index, 1, componentCodeBlockRenderer);
           }
         } catch (e) {}
       }
@@ -50,7 +50,7 @@ export const remarkComponentCodeBlock = () => {
 };
 
 // 使用json字符串作为prop的目的是防止组件(props.component)不必要的re-render
-const ComponentWrapper = defineComponent({
+const Wrapper = defineComponent({
   props: ["component", "componetPropsJson"],
   setup(props) {
     return () => {
@@ -67,8 +67,8 @@ const Placeholder = defineComponent({
   },
 });
 
-export const ComponentCodeBlock = defineComponent({
-  name: "component-code-block",
+export const ComponentCodeBlockRenderer = defineComponent({
+  name: "component-code-block-renderer",
   inheritAttrs: false,
 
   props: {
@@ -100,7 +100,7 @@ export const ComponentCodeBlock = defineComponent({
         );
       }
       const componentProps = node.properties.props;
-      return h(ComponentWrapper, {
+      return h(Wrapper, {
         component,
         componetPropsJson: JSON.stringify(componentProps),
       });
