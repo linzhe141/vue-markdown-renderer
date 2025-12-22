@@ -15,6 +15,7 @@ export interface ElementNode {
 export type Node = TextNode | ElementNode;
 
 const segmenter = new Intl.Segmenter("zh", { granularity: "word" });
+
 function wrap(node: Node) {
   if (node.type === "text") {
     return [...segmenter.segment(node.value)].map((s, i) =>
@@ -38,7 +39,15 @@ const SegmentTextImpl = defineComponent({
   },
 });
 
-export const segmentTextComponents = ["p", "h1", "h2", "h3", "li"].reduce(
+export const segmentTextWrappers = [
+  "p",
+  "h1",
+  "h2",
+  "h3",
+  "li",
+  "td",
+  "th",
+].reduce(
   (res, key) => {
     const item = {} as {
       [x: string]: Component;

@@ -1,7 +1,7 @@
 import { inject, provide, defineComponent, ref, onMounted } from "vue";
 import { type Highlighter } from "shiki";
-import { initShikiHighlighter } from "./highlight/shiki.js";
-import { shikiHighlightCoreKey } from "./symbol.js";
+import { initShikiHighlighter } from "./shiki.js";
+import { shikiHighlightCoreKey } from "../symbol.js";
 
 export const ShikiProvider = defineComponent({
   setup(_, { slots }) {

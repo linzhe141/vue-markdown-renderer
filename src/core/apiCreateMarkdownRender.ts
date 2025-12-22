@@ -7,6 +7,8 @@ import remarkGfm from "remark-gfm";
 import { remarkComponentCodeBlock } from "./plugin/remarkComponentCodeBlock.js";
 import { remarkEchartCodeBlock } from "./plugin/remarkEchartCodeBlock.js";
 import { remarkMermaidCodeBlock } from "./plugin/remarkMermaidCodeBlock.js";
+import { rehypeTable } from "./plugin/rehypeTable.js";
+
 import VueMarkdownRenderer from "./VueMarkdownRenderer.js";
 
 interface RemarkRehypeOptions {
@@ -25,6 +27,9 @@ export type ApiOptions = {
     renderer: Component;
     placeholder: Component;
   };
+  table?: {
+    renderer: Component;
+  };
   rehypePlugins?: Plugin[];
   remarkPlugins?: Plugin[];
   remarkRehypeOptions?: RemarkRehypeOptions;
@@ -40,6 +45,7 @@ export function createMarkdownRenderer(options?: ApiOptions) {
     .use(remarkMermaidCodeBlock)
     .use(options.remarkPlugins ?? [])
     .use(remarkRehype, options.remarkRehypeOptions || {})
+    .use(rehypeTable)
     .use(options.rehypePlugins ?? []);
 
   return defineComponent({

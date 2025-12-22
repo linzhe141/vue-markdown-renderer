@@ -8,40 +8,40 @@ export const remarkEchartCodeBlock = () => {
       if (node.lang === "echarts") {
         if (!node.meta) {
           // 默认的placeholder
-          const placeholder = {
-            type: "EchartCodeBlock",
+          const echartCodeBlockRenderer = {
+            type: "EchartCodeBlockRenderer",
             data: {
-              hName: "EchartCodeBlock",
+              hName: "EchartCodeBlockRenderer",
               hProperties: {
                 placeholder: "vue-mdr-default-echart-placeholder-key",
               },
             },
           };
-          parent.children.splice(index, 1, placeholder);
+          parent.children.splice(index, 1, echartCodeBlockRenderer);
         }
         try {
           const meta = JSON.parse(node.meta);
           try {
             const data = JSON.parse(node.value);
-            const echartCodeBlock = {
-              type: "EchartCodeBlock",
+            const echartCodeBlockRenderer = {
+              type: "EchartCodeBlockRenderer",
               data: {
-                hName: "EchartCodeBlock",
+                hName: "EchartCodeBlockRenderer",
                 hProperties: data,
               },
             };
-            parent.children.splice(index, 1, echartCodeBlock);
+            parent.children.splice(index, 1, echartCodeBlockRenderer);
           } catch (e) {
-            const placeholder = {
-              type: "EchartCodeBlock",
+            const echartCodeBlockRenderer = {
+              type: "EchartCodeBlockRenderer",
               data: {
-                hName: "EchartCodeBlock",
+                hName: "EchartCodeBlockRenderer",
                 hProperties: {
                   placeholder: meta.placeholder,
                 },
               },
             };
-            parent.children.splice(index, 1, placeholder);
+            parent.children.splice(index, 1, echartCodeBlockRenderer);
           }
         } catch (e) {}
       }
@@ -50,7 +50,7 @@ export const remarkEchartCodeBlock = () => {
 };
 
 // 使用json字符串作为prop的目的是防止组件(props.component)不必要的re-render
-const EchartWrapper = defineComponent({
+const Wrapper = defineComponent({
   props: ["optionJson"],
   setup(props) {
     const options = inject("markdown-renderer-options") as ApiOptions;
@@ -74,8 +74,8 @@ const Placeholder = defineComponent({
   },
 });
 
-export const EchartCodeBlock = defineComponent({
-  name: "echart-code-block",
+export const EchartCodeBlockRenderer = defineComponent({
+  name: "echart-code-block-renderer",
   inheritAttrs: false,
 
   props: {
@@ -94,7 +94,7 @@ export const EchartCodeBlock = defineComponent({
         return h(EchartRendererPlaceholder || Placeholder);
       }
 
-      return h(EchartWrapper, {
+      return h(Wrapper, {
         optionJson: JSON.stringify(node.properties),
       });
     };
