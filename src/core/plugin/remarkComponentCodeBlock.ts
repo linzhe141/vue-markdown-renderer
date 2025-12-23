@@ -85,7 +85,7 @@ export const ComponentCodeBlockRenderer = defineComponent({
       const placeholder = node.properties.placeholder;
       if (placeholder) {
         const target = computedComponentsMap?.[placeholder];
-        if (target === undefined) {
+        if (!target) {
           console.warn(
             `${placeholder} does not exist in componentsMap, the built-in 'Placeholder' will be used instead.`
           );
@@ -94,7 +94,7 @@ export const ComponentCodeBlockRenderer = defineComponent({
       }
 
       const component = computedComponentsMap?.[node.properties.type];
-      if (component === undefined) {
+      if (!component) {
         throw new Error(
           `${node.properties.type} not exist in componentsMap:${JSON.stringify(computedComponentsMap, null, 2)}`
         );

@@ -58,27 +58,14 @@ export const ShikiStreamCodeBlock = defineComponent({
           const lines = codeText.split("\n");
           const lastLine = lines[lines.length - 1];
 
-          let matchedMarkdownCount = 0;
-          if (language === "markdown") {
-            lines.forEach((line) => {
-              const trimStartLine = line.trimStart();
-              if (trimStartLine.startsWith("```")) {
-                matchedMarkdownCount++;
-              }
-            });
-            if (
-              lastLine &&
-              lastLine.trimStart().startsWith("```") &&
-              matchedMarkdownCount % 2 === 0
-            ) {
-              code = codeText;
-            }
+          if (
+            lines.length > 1 &&
+            lastLine &&
+            lastLine.trimStart().startsWith("`")
+          ) {
+            code = lines.slice(0, lines.length - 1).join("\n");
           } else {
-            if (lastLine && lastLine.trimStart().startsWith("`")) {
-              code = lines.slice(0, lines.length - 1).join("\n");
-            } else {
-              code = codeText;
-            }
+            code = codeText;
           }
         }
       }
@@ -94,7 +81,8 @@ export const ShikiStreamCodeBlock = defineComponent({
     return () => {
       if (!highlighter!.value) return null;
       const { highlightLang, language, code: codeChunk } = getCodeMeta();
-      if (codeChunk === "") return null;
+      // early render for better UX
+      // if (codeChunk === "") return null;
       const highlightVnode = h(ShikiCachedRenderer, {
         highlighter: highlighter!.value,
         code: codeChunk,
