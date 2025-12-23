@@ -138,13 +138,13 @@ const RawRender = defineComponent({
       const thead = h(
         "thead",
         { class: "vue-mdr-table-thead" },
-        ...props.thead.map((row: any[]) => h("tr", row.map(generateVueNode)))
+        props.thead.map((row: any[]) => h("tr", row.map(generateVueNode)))
       );
 
       const tbody = h(
         "tbody",
         { class: "vue-mdr-table-tbody" },
-        ...props.tbody.map((row: any[]) => h("tr", row.map(generateVueNode)))
+        props.tbody.map((row: any[]) => h("tr", row.map(generateVueNode)))
       );
 
       const rawTable = h("table", { class: "vue-mdr-table" }, [thead, tbody]);
