@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, onUnmounted, ref, useTemplateRef } from "vue";
 import "./animation.css";
 import Button from "./components/Button.vue";
 import { md as thinkMd } from "./examples/think";
@@ -51,10 +51,53 @@ function changeTheme() {
   }
   switchTheme.value = switchTheme.value === "dark" ? "light" : "dark";
 }
+
+const pleaceholderRef = useTemplateRef("pleaceholder");
+const showToButtom = ref(false);
+let observer: IntersectionObserver | null = null;
+function clickToButtomHandle() {
+  pleaceholderRef.value?.scrollIntoView({ behavior: "smooth" });
+}
+onMounted(() => {
+  observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        showToButtom.value = !entry.isIntersecting;
+      });
+    },
+    { threshold: 0.5 }
+  );
+  observer.observe(pleaceholderRef.value!);
+});
+onUnmounted(() => {
+  if (observer) {
+    observer.disconnect();
+  }
+});
 </script>
 
 <template>
   <div>
+    <button
+      v-if="showToButtom"
+      class="border-1 z-100 fixed bottom-10 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border-gray-300 bg-gray-50 p-2 shadow-xl hover:shadow-2xl"
+      @click="clickToButtomHandle"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M12 5v14" />
+        <path d="m19 12-7 7-7-7" />
+      </svg>
+    </button>
     <div
       style="
         display: flex;
@@ -105,5 +148,7 @@ function changeTheme() {
         </template>
       </template>
     </div>
+
+    <div class="h-[200px]" ref="pleaceholder"></div>
   </div>
 </template>
