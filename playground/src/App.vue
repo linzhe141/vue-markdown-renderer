@@ -14,7 +14,7 @@ const IS_BI_DEMO = new URLSearchParams(location.search).get("bidemo");
 const isRendering = ref(true);
 
 const activePage = IS_THINK_DEMO ? "think" : IS_BI_DEMO ? "bi" : "readme";
-const parsms: [chunkSize: number, delay: number] = IS_THINK_DEMO
+const streamParams: [chunkSize: number, delay: number] = IS_THINK_DEMO
   ? [5, 30]
   : IS_BI_DEMO
     ? [10, 20]
@@ -22,7 +22,7 @@ const parsms: [chunkSize: number, delay: number] = IS_THINK_DEMO
 const parseNodes = ref<ParseNode[]>([]);
 
 async function clickHandle() {
-  const [chunkSize, delay] = parsms;
+  const [chunkSize, delay] = streamParams;
   isRendering.value = true;
   let formatMd = "";
   parseNodes.value = [];
