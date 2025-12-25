@@ -58,12 +58,28 @@ export const ShikiStreamCodeBlock = defineComponent({
           const lines = codeText.split("\n");
           const lastLine = lines[lines.length - 1];
 
+          let matchedMaybeMarkdownCodeblockCount = 0;
+          if (language === "markdown") {
+            for (const line of lines) {
+              if (line.trimStart().startsWith("`")) {
+                matchedMaybeMarkdownCodeblockCount++;
+              }
+            }
+          }
+
           if (
             lines.length > 1 &&
             lastLine &&
             lastLine.trimStart().startsWith("`")
           ) {
-            code = lines.slice(0, lines.length - 1).join("\n");
+            if (
+              language === "markdown" &&
+              matchedMaybeMarkdownCodeblockCount % 2 === 0
+            ) {
+              code = codeText;
+            } else {
+              code = lines.slice(0, lines.length - 1).join("\n");
+            }
           } else {
             code = codeText;
           }
