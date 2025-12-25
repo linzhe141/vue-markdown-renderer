@@ -133,7 +133,7 @@ onUnmounted(() => {
             ></path>
           </svg>
         </a>
-        <div class="my-2 space-x-6">
+        <div class="my-2 space-x-6 dark:text-white">
           <a :class="{ underline: activePage === 'readme' }" href="./">
             readme
           </a>
