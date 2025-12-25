@@ -38,7 +38,7 @@
     "prettier": "^3.5.2",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "typescript": "^5.8.3",
-    "vite": "^6.2.0",
+    "vite": "^7.2.7",
     "vitest": "^3.0.7"
   },
   "peerDependencies": {
@@ -54,7 +54,7 @@
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.2",
     "shiki": "^3.6.0",
-    "shiki-stream": "^0.1.2",
+    "shiki-stream": "^0.1.3",
     "unified": "^11.0.5",
     "unist-util-visit": "^5.0.0",
     "vfile": "^6.0.3"
