@@ -22,6 +22,7 @@ const parsms: [chunkSize: number, delay: number] = IS_THINK_DEMO
 const parseNodes = ref<ParseNode[]>([]);
 
 async function clickHandle() {
+  const [chunkSize, delay] = parsms;
   isRendering.value = true;
   let formatMd = "";
   parseNodes.value = [];
@@ -32,8 +33,7 @@ async function clickHandle() {
     const md = await res.text();
     formatMd = convertLatexDelimiters(md);
   }
-
-  const stream = createStream(formatMd, parsms[0], parsms[1]);
+  const stream = createStream(formatMd, chunkSize, delay);
   // ios 不支持 Symbol.asyncIterator
   const reader = stream.getReader();
 
