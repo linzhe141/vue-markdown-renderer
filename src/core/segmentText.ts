@@ -48,12 +48,10 @@ export const segmentTextWrappers = [
   "td",
   "th",
 ].reduce(
-  (res, key) => {
-    const item = {} as {
-      [x: string]: Component;
-    };
-    item[key] = defineComponent({
-      name: key + "-wrapper",
+  (res, tag) => {
+    const item = {} as { [x: string]: Component };
+    item[tag] = defineComponent({
+      name: tag + "-wrapper",
       props: {
         node: {
           type: Object as PropType<ElementNode>,
@@ -63,7 +61,7 @@ export const segmentTextWrappers = [
       setup(props) {
         return () => {
           return h(
-            key,
+            tag,
             null,
             props.node.children.map((child) =>
               h(SegmentTextImpl, { node: child })
@@ -74,7 +72,5 @@ export const segmentTextWrappers = [
     });
     return Object.assign(res, item);
   },
-  {} as {
-    [x: string]: Component;
-  }
+  {} as { [x: string]: Component }
 );
