@@ -3,6 +3,7 @@ import { unified, type Plugin } from "unified";
 import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import remarkGfm from "remark-gfm";
+import rehypeRaw from 'rehype-raw'
 
 import { remarkComponentCodeBlock } from "./plugin/remarkComponentCodeBlock.js";
 import { remarkEchartCodeBlock } from "./plugin/remarkEchartCodeBlock.js";
@@ -45,6 +46,7 @@ export function createMarkdownRenderer(options?: ApiOptions) {
     .use(remarkMermaidCodeBlock)
     .use(options.remarkPlugins ?? [])
     .use(remarkRehype, options.remarkRehypeOptions || {})
+    .use(rehypeRaw)
     .use(rehypeTable)
     .use(options.rehypePlugins ?? []);
 
