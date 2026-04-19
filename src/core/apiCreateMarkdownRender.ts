@@ -3,7 +3,11 @@ import { unified, type Plugin } from "unified";
 import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import remarkGfm from "remark-gfm";
-import rehypeRaw from 'rehype-raw'
+import rehypeRaw from "rehype-raw";
+import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
+import type { Schema } from "hast-util-sanitize";
+
+import deepmerge from "deepmerge";
 
 import { remarkComponentCodeBlock } from "./plugin/remarkComponentCodeBlock.js";
 import { remarkEchartCodeBlock } from "./plugin/remarkEchartCodeBlock.js";
@@ -34,6 +38,7 @@ export type ApiOptions = {
   rehypePlugins?: Plugin[];
   remarkPlugins?: Plugin[];
   remarkRehypeOptions?: RemarkRehypeOptions;
+  rehypeSanitizeSchema?: Schema;
 };
 
 export function createMarkdownRenderer(options?: ApiOptions) {
@@ -47,6 +52,10 @@ export function createMarkdownRenderer(options?: ApiOptions) {
     .use(options.remarkPlugins ?? [])
     .use(remarkRehype, options.remarkRehypeOptions || {})
     .use(rehypeRaw)
+    .use(
+      rehypeSanitize,
+      deepmerge(defaultSchema, options.rehypeSanitizeSchema || {})
+    )
     .use(rehypeTable)
     .use(options.rehypePlugins ?? []);
 

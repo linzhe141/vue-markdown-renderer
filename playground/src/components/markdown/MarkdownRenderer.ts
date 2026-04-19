@@ -32,4 +32,12 @@ export const MarkdownRenderer = createMarkdownRenderer({
   // },
   remarkPlugins: [remarkMath],
   rehypePlugins: [rehypeKatex as unknown as Plugin],
+  remarkRehypeOptions: {
+    allowDangerousHtml: true,
+  },
+  rehypeSanitizeSchema: {
+    attributes: {
+      "*": ["className", "style"],
+    },
+  },
 });
