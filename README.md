@@ -46,7 +46,7 @@ export const MarkdownRenderer = createMarkdownRenderer({
 
 ```vue
 <template>
-  <MarkdownRenderer :source="markdownText" />
+  <MarkdownRenderer :source="markdownText" theme="light" />
 </template>
 ```
 
@@ -108,6 +108,20 @@ export const MarkdownRenderer = createMarkdownRenderer({
    */
   remarkPlugins: [remarkMath],
   rehypePlugins: [rehypeKatex as unknown as Plugin],
+  /**
+   * built-in remarkRehype plugin options
+   */
+  remarkRehypeOptions: {
+    allowDangerousHtml: true,
+  },
+  /**
+   * built-in rehypeSanitize plugin custom schema
+   */
+  rehypeSanitizeSchema: {
+    attributes: {
+      "*": ["className", "style"],
+    },
+  },
 });
 ```
 
