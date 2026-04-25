@@ -23,13 +23,13 @@ function copyHandle() {
     <div
       class="flex items-center justify-between bg-[#2f2f2f] p-2 text-[#cdcdcd]"
     >
-      <span class="text-xs uppercase tracking-wider text-gray-400">
+      <span class="text-xs tracking-wider text-gray-400 uppercase">
         MERMAID
       </span>
 
       <div class="relative cursor-pointer p-1" @click="copyHandle">
         <template v-if="copied">
-          <div class="absolute -left-16 -top-6 z-10">
+          <div class="absolute -top-6 -left-16 z-10">
             <pre
               class="rounded bg-slate-100 px-2 py-1 text-sm text-green-500 dark:bg-black"
             >

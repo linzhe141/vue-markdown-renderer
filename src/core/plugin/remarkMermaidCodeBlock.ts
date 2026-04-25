@@ -3,17 +3,21 @@ import { defineComponent, h, inject, ref, watch } from "vue";
 import mermaid from "mermaid";
 import { ApiOptions } from "../apiCreateMarkdownRender.js";
 
+export const htag = "MermaidRenderer".toLowerCase();
+export const hprops = ["source"] as const;
+type Properties = Partial<Record<(typeof hprops)[number], string>>;
+
 export const remarkMermaidCodeBlock = () => {
   return (tree) => {
     visit(tree, "code", (node, index, parent) => {
       if (node.lang === "mermaid") {
         const mermaid = {
-          type: "MermaidRenderer",
+          type: "element",
           data: {
-            hName: "MermaidRenderer",
+            hName: htag,
             hProperties: {
               source: node.value,
-            },
+            } satisfies Properties,
           },
         };
         parent.children.splice(index, 1, mermaid);

@@ -16,7 +16,7 @@ const props = defineProps<{
     <div
       class="flex items-center justify-between bg-[#2f2f2f] p-2 text-[#cdcdcd]"
     >
-      <span class="text-xs uppercase tracking-wider text-gray-400">
+      <span class="text-xs tracking-wider text-gray-400 uppercase">
         TABLE
       </span>
     </div>
@@ -48,7 +48,7 @@ const props = defineProps<{
             <div
               v-for="(cell, cellIndex) in row"
               :key="cellIndex"
-              class="flex-1 border-r border-t border-gray-200 px-3 py-2 last:border-r-0 dark:border-neutral-700"
+              class="flex-1 border-t border-r border-gray-200 px-3 py-2 last:border-r-0 dark:border-neutral-700"
             >
               {{ cell }}
             </div>

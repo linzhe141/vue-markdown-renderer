@@ -87,7 +87,7 @@ onUnmounted(() => {
   <div>
     <button
       v-if="showToButtom"
-      class="border-1 z-100 fixed bottom-10 left-1/2 -translate-x-1/2 cursor-pointer rounded-full border-gray-300 bg-gray-50 p-2 shadow-xl hover:shadow-2xl"
+      class="fixed bottom-10 left-1/2 z-100 -translate-x-1/2 cursor-pointer rounded-full border-1 border-gray-300 bg-gray-50 p-2 shadow-xl hover:shadow-2xl"
       @click="clickToButtomHandle"
     >
       <svg

@@ -8,12 +8,11 @@ We have completed a comprehensive analysis of your company’s sales performance
 
 Overall performance this quarter exceeded expectations. Key indicators are summarized below:
 
-* **Total Quarterly Revenue**: ¥89.50 million (YoY +32.4%, QoQ +18.7%)
-* **Total Orders**: 42,580 orders (YoY +28.1%)
-* **Average Order Value (AOV)**: ¥2,102 (YoY +3.4%)
-* **New Customers**: 15,240 (+41.2% YoY)
-* **Repeat Purchase Rate**: 38.7% (+5.2 percentage points YoY)
-
+- **Total Quarterly Revenue**: ¥89.50 million (YoY +32.4%, QoQ +18.7%)
+- **Total Orders**: 42,580 orders (YoY +28.1%)
+- **Average Order Value (AOV)**: ¥2,102 (YoY +3.4%)
+- **New Customers**: 15,240 (+41.2% YoY)
+- **Repeat Purchase Rate**: 38.7% (+5.2 percentage points YoY)
 
 ```component-json {"placeholder": "Placeholder"}
 {
@@ -26,6 +25,7 @@ Overall performance this quarter exceeded expectations. Key indicators are summa
   }
 }
 ```
+
 ---
 
 ## II. Regional Sales Performance Analysis
@@ -74,9 +74,9 @@ From a geographic perspective, the East China region remains our primary market:
 
 **Regional Insights**:
 
-* East China accounts for **35%** of total revenue, maintaining its leading position, though growth has slowed (+12.3%)
-* South China shows strong momentum (+45.8%), emerging as a new growth engine
-* Southwest China demonstrates high potential and warrants increased investment
+- East China accounts for **35%** of total revenue, maintaining its leading position, though growth has slowed (+12.3%)
+- South China shows strong momentum (+45.8%), emerging as a new growth engine
+- Southwest China demonstrates high potential and warrants increased investment
 
 ---
 
@@ -147,11 +147,12 @@ From a geographic perspective, the East China region remains our primary market:
   ]
 }
 ```
+
 **Key Findings**:
 
-* December delivered explosive growth, exceeding targets by **10.7%**
-* November underperformed slightly due to post–Singles’ Day demand softness
-* Full-quarter YoY growth reached **32.4%**, indicating healthy momentum
+- December delivered explosive growth, exceeding targets by **10.7%**
+- November underperformed slightly due to post–Singles’ Day demand softness
+- Full-quarter YoY growth reached **32.4%**, indicating healthy momentum
 
 ---
 
@@ -227,7 +228,6 @@ A radar chart was used to evaluate the overall performance of key product lines:
 }
 ```
 
-
 **Product Strategy Recommendations**:
 
 1. **Smart Hardware**: Strong market leadership, but signs of slowing growth—new product launches are recommended
@@ -248,7 +248,7 @@ graph TD
     D --> E[Orders Placed: 17,000]
     E --> F[Completed Payments: 15,240]
     F --> G[Repeat Customers: 5,898]
-    
+
     style A fill:#e3f2fd
     style B fill:#bbdefb
     style C fill:#90caf9
@@ -258,20 +258,19 @@ graph TD
     style G fill:#1976d2
 ```
 
-
 **Conversion Metrics**:
 
-* Exposure → Visit: **23.0%** (Industry avg: 18–22%) ✅ Exceeds expectations
-* Visit → Registration: **20.0%** (Industry avg: 15–18%) ✅ Strong performance
-* Registration → Trial: **40.0%** (Industry avg: 35–45%) ✅ On target
-* Trial → Order: **50.0%** (Industry avg: 40–50%) ✅ Upper bound
-* Order → Payment: **89.6%** (Industry avg: 75–85%) 🔥 Significantly above average
-* Payment → Repeat Purchase: **38.7%** (Industry avg: 25–35%) 🔥 Outstanding
+- Exposure → Visit: **23.0%** (Industry avg: 18–22%) ✅ Exceeds expectations
+- Visit → Registration: **20.0%** (Industry avg: 15–18%) ✅ Strong performance
+- Registration → Trial: **40.0%** (Industry avg: 35–45%) ✅ On target
+- Trial → Order: **50.0%** (Industry avg: 40–50%) ✅ Upper bound
+- Order → Payment: **89.6%** (Industry avg: 75–85%) 🔥 Significantly above average
+- Payment → Repeat Purchase: **38.7%** (Industry avg: 25–35%) 🔥 Outstanding
 
 **Optimization Recommendation**:
 
-* While performance is strong across all stages, the **registration-to-trial** step still has ~10% upside
-* Simplifying the trial onboarding process is recommended
+- While performance is strong across all stages, the **registration-to-trial** step still has ~10% upside
+- Simplifying the trial onboarding process is recommended
 
 ---
 
@@ -337,10 +336,10 @@ Based on the RFM model, customers were segmented as follows:
 
 **Customer Operation Strategies**:
 
-* **High-Value Customers (1,840)**: Provide VIP services with dedicated Customer Success Managers
-* **Growth-Potential Customers (3,560)**: Strengthen product education to encourage deeper usage
-* **Retention-Focused Customers (4,280)**: Conduct regular follow-ups to prevent churn
-* **At-Risk Customers (610)**: Launch win-back programs and analyze churn drivers
+- **High-Value Customers (1,840)**: Provide VIP services with dedicated Customer Success Managers
+- **Growth-Potential Customers (3,560)**: Strengthen product education to encourage deeper usage
+- **Retention-Focused Customers (4,280)**: Conduct regular follow-ups to prevent churn
+- **At-Risk Customers (610)**: Launch win-back programs and analyze churn drivers
 
 ---
 
@@ -353,6 +352,7 @@ CLV = \sum_{t=1}^{n} \frac{R_t - C_t}{(1 + d)^{t-1}}
 $$
 
 Where:
+
 - $R_t$ = revenue in period $t$
 - $C_t$ = cost in period $t$
 - $d$ = discount rate (12%)
@@ -371,9 +371,9 @@ $$
 
 **ROI Insights**:
 
-* Average CAC: ¥420
-* LTV/CAC for high-value customers reaches **46.3**, far exceeding the healthy benchmark of 3:1
-* Recommendation: increase acquisition investment targeting high-value segments
+- Average CAC: ¥420
+- LTV/CAC for high-value customers reaches **46.3**, far exceeding the healthy benchmark of 3:1
+- Recommendation: increase acquisition investment targeting high-value segments
 
 ---
 
@@ -431,9 +431,9 @@ $$
 
 **Competitive Landscape**:
 
-* Market share increased from **18.5% to 21.3%**, a gain of 2.8 percentage points
-* Successfully surpassed Competitor B, ranking **second** in the industry
-* Gap with the market leader (Competitor A) narrowed to **1.8 percentage points**
+- Market share increased from **18.5% to 21.3%**, a gain of 2.8 percentage points
+- Successfully surpassed Competitor B, ranking **second** in the industry
+- Gap with the market leader (Competitor A) narrowed to **1.8 percentage points**
 
 ---
 
@@ -442,21 +442,18 @@ $$
 ### 6.1 Marketing Strategy
 
 1. **South China Market Expansion**
-
-   * Budget: ¥1.8 million
-   * Target: 40% growth
-   * Actions: establish a regional operations center and recruit local teams
+   - Budget: ¥1.8 million
+   - Target: 40% growth
+   - Actions: establish a regional operations center and recruit local teams
 
 2. **Product Portfolio Optimization**
-
-   * SaaS: introduce annual subscription discounts to increase LTV
-   * Smart Hardware: launch next-generation products targeting the Spring Festival
-   * Enterprise Customization: initiate dedicated large-account campaigns
+   - SaaS: introduce annual subscription discounts to increase LTV
+   - Smart Hardware: launch next-generation products targeting the Spring Festival
+   - Enterprise Customization: initiate dedicated large-account campaigns
 
 3. **Customer Segmentation Operations**
-
-   * High-value customers: dedicated CSMs (1:50 ratio)
-   * At-risk customers: 90-day retention recovery program
+   - High-value customers: dedicated CSMs (1:50 ratio)
+   - At-risk customers: 90-day retention recovery program
 
 ---
 
@@ -494,19 +491,16 @@ gantt
 ⚠️ **Key Risks to Monitor**:
 
 1. **Market Risk**
-
-   * February sales dip due to Spring Festival (historical avg: −22%)
-   * Mitigation: inventory preparation and stronger marketing in January & March
+   - February sales dip due to Spring Festival (historical avg: −22%)
+   - Mitigation: inventory preparation and stronger marketing in January & March
 
 2. **Competitive Risk**
-
-   * Potential price war initiated by Competitor A
-   * Mitigation: reinforce differentiation and avoid pure price competition
+   - Potential price war initiated by Competitor A
+   - Mitigation: reinforce differentiation and avoid pure price competition
 
 3. **Supply Chain Risk**
-
-   * Extended lead times for certain core components
-   * Mitigation: early stocking and secondary supplier development
+   - Extended lead times for certain core components
+   - Mitigation: early stocking and secondary supplier development
 
 ---
 
@@ -516,20 +510,20 @@ Q4 2024 delivered outstanding results, **exceeding targets with 32.4% YoY growth
 
 ✅ **Strengths**:
 
-* Conversion rates significantly outperform industry benchmarks
-* Rising repeat purchase rate, indicating stronger customer loyalty
-* Expanded market share and improved competitive positioning
+- Conversion rates significantly outperform industry benchmarks
+- Rising repeat purchase rate, indicating stronger customer loyalty
+- Expanded market share and improved competitive positioning
 
 ⚠️ **Areas for Improvement**:
 
-* Sluggish AOV growth, indicating limited pricing power
-* Uneven regional development
-* Further room to reduce churn
+- Sluggish AOV growth, indicating limited pricing power
+- Uneven regional development
+- Further room to reduce churn
 
 🎯 **Strategic Focus for 2025**:
 
-* Deepen engagement with high-value customers to maximize CLV
-* Accelerate expansion in South China
-* Shift product mix toward higher-margin offerings
+- Deepen engagement with high-value customers to maximize CLV
+- Accelerate expansion in South China
+- Shift product mix toward higher-margin offerings
 
 If you have any questions or require deeper analysis on specific areas, please feel free to reach out.

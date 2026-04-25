@@ -2,19 +2,22 @@ import { visit } from "unist-util-visit";
 import { defineComponent, h, inject } from "vue";
 import { ApiOptions } from "../apiCreateMarkdownRender.js";
 
+export const htag = "ComponentCodeBlockRenderer".toLowerCase();
+export const hprops = ["type", "props", "placeholder"] as const;
+type Properties = Partial<Record<(typeof hprops)[number], string>>;
+
 export const remarkComponentCodeBlock = () => {
   return (tree) => {
     visit(tree, "code", (node, index, parent) => {
       if (node.lang === "component-json") {
         if (!node.meta) {
-          // 默认的placeholder
           const componentCodeBlockRenderer = {
-            type: "ComponentCodeBlockRenderer",
+            type: "element",
             data: {
-              hName: "ComponentCodeBlockRenderer",
+              hName: htag,
               hProperties: {
                 placeholder: "vue-mdr-default-component-placeholder-key",
-              },
+              } satisfies Properties,
             },
           };
           parent.children.splice(index, 1, componentCodeBlockRenderer);
@@ -24,21 +27,24 @@ export const remarkComponentCodeBlock = () => {
           try {
             const data = JSON.parse(node.value);
             const componentCodeBlockRenderer = {
-              type: "ComponentCodeBlockRenderer",
+              type: "element",
               data: {
-                hName: "ComponentCodeBlockRenderer",
-                hProperties: data,
+                hName: htag,
+                hProperties: {
+                  type: data.type,
+                  props: JSON.stringify(data.props),
+                } satisfies Properties,
               },
             };
             parent.children.splice(index, 1, componentCodeBlockRenderer);
           } catch (e) {
             const componentCodeBlockRenderer = {
-              type: "ComponentCodeBlockRenderer",
+              type: "element",
               data: {
-                hName: "ComponentCodeBlockRenderer",
+                hName: htag,
                 hProperties: {
                   placeholder: meta.placeholder,
-                },
+                } satisfies Properties,
               },
             };
             parent.children.splice(index, 1, componentCodeBlockRenderer);
@@ -48,24 +54,6 @@ export const remarkComponentCodeBlock = () => {
     });
   };
 };
-
-// 使用json字符串作为prop的目的是防止组件(props.component)不必要的re-render
-const Wrapper = defineComponent({
-  props: ["component", "componetPropsJson"],
-  setup(props) {
-    return () => {
-      return h(props.component, JSON.parse(props.componetPropsJson));
-    };
-  },
-});
-
-const Placeholder = defineComponent({
-  setup() {
-    return () => {
-      return h("div", { class: "vue-mdr-default-component-placeholder" });
-    };
-  },
-});
 
 export const ComponentCodeBlockRenderer = defineComponent({
   name: "component-code-block-renderer",
@@ -102,8 +90,26 @@ export const ComponentCodeBlockRenderer = defineComponent({
       const componentProps = node.properties.props;
       return h(Wrapper, {
         component,
-        componetPropsJson: JSON.stringify(componentProps),
+        componetPropsJson: componentProps,
       });
+    };
+  },
+});
+
+// 使用json字符串作为prop的目的是防止组件(props.component)不必要的re-render
+const Wrapper = defineComponent({
+  props: ["component", "componetPropsJson"],
+  setup(props) {
+    return () => {
+      return h(props.component, JSON.parse(props.componetPropsJson));
+    };
+  },
+});
+
+const Placeholder = defineComponent({
+  setup() {
+    return () => {
+      return h("div", { class: "vue-mdr-default-component-placeholder" });
     };
   },
 });

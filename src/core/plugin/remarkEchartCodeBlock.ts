@@ -2,6 +2,10 @@ import { visit } from "unist-util-visit";
 import { defineComponent, h, inject } from "vue";
 import { ApiOptions } from "../apiCreateMarkdownRender.js";
 
+export const htag = "EchartCodeBlockRenderer".toLowerCase();
+export const hprops = ["config", "placeholder"] as const;
+type Properties = Partial<Record<(typeof hprops)[number], string>>;
+
 export const remarkEchartCodeBlock = () => {
   return (tree) => {
     visit(tree, "code", (node, index, parent) => {
@@ -9,12 +13,12 @@ export const remarkEchartCodeBlock = () => {
         if (!node.meta) {
           // 默认的placeholder
           const echartCodeBlockRenderer = {
-            type: "EchartCodeBlockRenderer",
+            type: "element",
             data: {
-              hName: "EchartCodeBlockRenderer",
+              hName: htag,
               hProperties: {
                 placeholder: "vue-mdr-default-echart-placeholder-key",
-              },
+              } satisfies Properties,
             },
           };
           parent.children.splice(index, 1, echartCodeBlockRenderer);
@@ -22,23 +26,25 @@ export const remarkEchartCodeBlock = () => {
         try {
           const meta = JSON.parse(node.meta);
           try {
-            const data = JSON.parse(node.value);
+            JSON.parse(node.value);
             const echartCodeBlockRenderer = {
-              type: "EchartCodeBlockRenderer",
+              type: "element",
               data: {
-                hName: "EchartCodeBlockRenderer",
-                hProperties: data,
+                hName: htag,
+                hProperties: {
+                  config: node.value,
+                } as Properties,
               },
             };
             parent.children.splice(index, 1, echartCodeBlockRenderer);
           } catch (e) {
             const echartCodeBlockRenderer = {
-              type: "EchartCodeBlockRenderer",
+              type: "element",
               data: {
-                hName: "EchartCodeBlockRenderer",
+                hName: htag,
                 hProperties: {
                   placeholder: meta.placeholder,
-                },
+                } satisfies Properties,
               },
             };
             parent.children.splice(index, 1, echartCodeBlockRenderer);
@@ -48,23 +54,6 @@ export const remarkEchartCodeBlock = () => {
     });
   };
 };
-
-// 使用json字符串作为prop的目的是防止组件(props.component)不必要的re-render
-const Wrapper = defineComponent({
-  props: ["optionJson"],
-  setup(props) {
-    const options = inject("markdown-renderer-options") as ApiOptions;
-    const EchartRenderer = options.echart?.renderer;
-    return () => {
-      if (!EchartRenderer) {
-        throw new Error(`echartRenderer must be provided`);
-      }
-      return h(EchartRenderer, {
-        option: JSON.parse(props.optionJson),
-      });
-    };
-  },
-});
 
 const Placeholder = defineComponent({
   setup() {
@@ -86,6 +75,10 @@ export const EchartCodeBlockRenderer = defineComponent({
   },
   setup(props) {
     const options = inject("markdown-renderer-options") as ApiOptions;
+    const EchartRenderer = options.echart?.renderer;
+    if (!EchartRenderer) {
+      throw new Error(`echartRenderer must be provided`);
+    }
     const EchartRendererPlaceholder = options.echart?.placeholder;
     return () => {
       const node = props.node;
@@ -93,9 +86,9 @@ export const EchartCodeBlockRenderer = defineComponent({
       if (placeholder) {
         return h(EchartRendererPlaceholder || Placeholder);
       }
-
-      return h(Wrapper, {
-        optionJson: JSON.stringify(node.properties),
+      const config = node.properties.config;
+      return h(EchartRenderer, {
+        option: JSON.parse(config),
       });
     };
   },

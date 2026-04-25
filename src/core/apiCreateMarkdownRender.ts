@@ -4,7 +4,7 @@ import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
-import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
+import rehypeSanitize from "rehype-sanitize";
 import type { Schema } from "hast-util-sanitize";
 
 import deepmerge from "deepmerge";
@@ -12,9 +12,12 @@ import deepmerge from "deepmerge";
 import { remarkComponentCodeBlock } from "./plugin/remarkComponentCodeBlock.js";
 import { remarkEchartCodeBlock } from "./plugin/remarkEchartCodeBlock.js";
 import { remarkMermaidCodeBlock } from "./plugin/remarkMermaidCodeBlock.js";
+import { remarkCompleteTable } from "./plugin/remarkTable.js";
 import { rehypeTable } from "./plugin/rehypeTable.js";
+import { rehypeSegmentText } from "./plugin/rehypeSegmentText.js";
 
 import VueMarkdownRenderer from "./VueMarkdownRenderer.js";
+import { buildSanitizeSchema } from "./buildSanitizeSchema.js";
 
 interface RemarkRehypeOptions {
   allowDangerousHtml?: boolean;
@@ -49,12 +52,14 @@ export function createMarkdownRenderer(options?: ApiOptions) {
     .use(remarkComponentCodeBlock)
     .use(remarkEchartCodeBlock)
     .use(remarkMermaidCodeBlock)
+    .use(remarkCompleteTable)
     .use(options.remarkPlugins ?? [])
     .use(remarkRehype, options.remarkRehypeOptions || {})
+    .use(rehypeSegmentText)
     .use(rehypeRaw)
     .use(
       rehypeSanitize,
-      deepmerge(defaultSchema, options.rehypeSanitizeSchema || {})
+      deepmerge(buildSanitizeSchema(), options.rehypeSanitizeSchema || {})
     )
     .use(rehypeTable)
     .use(options.rehypePlugins ?? []);

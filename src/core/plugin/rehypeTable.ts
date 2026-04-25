@@ -1,6 +1,6 @@
 import type { Plugin } from "unified";
 import { visit } from "unist-util-visit";
-import { defineComponent, h, inject, ref } from "vue";
+import { defineComponent, h, inject } from "vue";
 import { ApiOptions } from "../apiCreateMarkdownRender";
 import { generateVueNode } from "../jsx";
 

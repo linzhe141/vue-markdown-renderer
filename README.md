@@ -15,9 +15,9 @@ Unlike traditional Markdown components that rely on many reactive props,
 const MarkdownRenderer = createMarkdownRenderer(config);
 ```
 
-* Rendering capabilities are defined **once**
-* The returned renderer component is **pure and predictable**
-* Avoids the mental overhead of “is this prop reactive?”
+- Rendering capabilities are defined **once**
+- The returned renderer component is **pure and predictable**
+- Avoids the mental overhead of “is this prop reactive?”
 
 This design is intentional:
 **99% of Markdown rendering scenarios do not require runtime mutation of render rules.**
@@ -139,9 +139,9 @@ createMarkdownRenderer({
 });
 ```
 
-* No runtime mutation
-* No watchers
-* No ambiguous reactivity expectations
+- No runtime mutation
+- No watchers
+- No ambiguous reactivity expectations
 
 > The renderer is **configured**, not **controlled**.
 
@@ -176,11 +176,11 @@ interface Props {
 
 This allows you to implement:
 
-* Copy buttons
-* Language labels
-* Custom headers
-* Animations
-* Streaming-friendly UI
+- Copy buttons
+- Language labels
+- Custom headers
+- Animations
+- Streaming-friendly UI
 
 ```ts
 codeBlock: {
@@ -209,6 +209,7 @@ codeBlock: {
 ```component-json {"placeholder": "Placeholder"}
 {"type":"BarChart","props":{"chartData":{"categories":["type1","type2","type3","type4","type5","type6","type7","type8","type9","type10","type11","type12","type13","type14","type15","type16","type17","type18","type19","type20"],"seriesData":[100,200,150,180,120,130,170,160,190,210,220,140,125,155,165,175,185,195,205,215]}}}
 ```
+
 ## Rendering ECharts
 
 ````markdown
@@ -271,6 +272,7 @@ echart: {
   placeholder: Placeholder,
 }
 ```
+
 ```echarts
 {
   "title": {
@@ -338,11 +340,13 @@ mermaid: {
   renderer: MermaidRenderer,
 }
 ```
+
 ```mermaid
 sequenceDiagram
   Alice->>Bob: Hello
   Bob-->>Alice: Hi!
 ```
+
 ---
 
 ## LaTeX Support
@@ -360,4 +364,3 @@ $$
 \nabla \cdot \vec{\mathbf{B}} & = 0
 \end{align}
 $$
-
