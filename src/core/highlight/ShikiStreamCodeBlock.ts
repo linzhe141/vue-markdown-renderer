@@ -2,7 +2,6 @@ import { computed, defineComponent, h, inject } from "vue";
 import { ShikiCachedRenderer } from "shiki-stream/vue";
 import { useShiki } from "./ShikiProvider.js";
 import { THEME } from "./codeTheme.js";
-import { ElementNode } from "../segmentText.js";
 import { useProxyProps } from "../useProxyProps.js";
 import { ApiOptions } from "../apiCreateMarkdownRender.js";
 
@@ -28,7 +27,7 @@ export const ShikiStreamCodeBlock = defineComponent({
     });
 
     function getCodeMeta() {
-      const node = JSON.parse(props.nodeJSON) as ElementNode;
+      const node = JSON.parse(props.nodeJSON);
       const loadedLangs = highlighter!.value!.getLoadedLanguages();
       let language = "";
       let code = "";
