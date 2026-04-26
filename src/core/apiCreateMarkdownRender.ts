@@ -9,7 +9,7 @@ import type { Schema } from "hast-util-sanitize";
 
 import deepmerge from "deepmerge";
 
-import { remarkCodeMeta } from "./plugin/remarkCodeBlock.js";
+import { rehypeCodeMeta } from "./plugin/remarkCodeBlock.js";
 import { remarkCompleteTable } from "./plugin/remarkTable.js";
 import { rehypeTable } from "./plugin/rehypeTable.js";
 import { rehypeSegmentText } from "./plugin/rehypeSegmentText.js";
@@ -49,7 +49,6 @@ export function createMarkdownRenderer(options?: ApiOptions) {
     .use(remarkGfm)
     .use(remarkCompleteTable)
     .use(options.remarkPlugins ?? [])
-    .use(remarkCodeMeta)
     .use(remarkRehype, options.remarkRehypeOptions || {})
     .use(rehypeSegmentText)
     .use(rehypeRaw)
@@ -57,6 +56,7 @@ export function createMarkdownRenderer(options?: ApiOptions) {
       rehypeSanitize,
       deepmerge(buildSanitizeSchema(), options.rehypeSanitizeSchema || {})
     )
+    .use(rehypeCodeMeta)
     .use(rehypeTable)
     .use(options.rehypePlugins ?? []);
 
