@@ -60,7 +60,7 @@ const onLeave = () => {
         v-if="isWebSearch"
         class="ml-1 inline-flex items-center justify-center rounded-full border border-gray-300 bg-gray-100 px-1.5 text-[10px] font-medium text-gray-600 transition-all group-hover:border-blue-300 group-hover:bg-blue-50 group-hover:text-blue-600"
       >
-        {{ webSearchIndex }}
+        {{ webSearchIndex! + 1 }}
       </span>
     </a>
 
