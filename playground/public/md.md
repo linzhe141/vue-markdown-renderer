@@ -14,6 +14,8 @@ A **config-driven**, high-performance Markdown renderer for Vue, designed for **
 
 [live demo](https://linzhe141.github.io/vue-markdown-renderer/)
 
+![VueMarkdownRenderer demo image](./vue-mdr-logo.svg)
+
 ---
 
 ## Core Idea

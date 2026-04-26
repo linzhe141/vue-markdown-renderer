@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./assets/vue-mdr-logo.svg" alt="vue-mdr logo" width="220" />
+</p>
+
 # VueMarkdownRenderer
 
 A **config-driven**, high-performance Markdown renderer for Vue, designed for **LLM streaming**, **rich code blocks**, and **embedded visual components**.

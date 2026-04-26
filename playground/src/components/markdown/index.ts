@@ -1,6 +1,7 @@
 import BarChart from "./BarChart.vue";
 import CodeBlockRenderer from "./CodeBlockRenderer.vue";
 import EchartRenderer from "./EchartRenderer.vue";
+import ImageRenderer from "./ImageRenderer.vue";
 import MermaidRenderer from "./MermaidRenderer.vue";
 import TableRenderer from "./TableRenderer.vue";
 import Placeholder from "./Placeholder.vue";
@@ -10,6 +11,7 @@ export {
   CodeBlockRenderer,
   MermaidRenderer,
   EchartRenderer,
+  ImageRenderer,
   TableRenderer,
   Placeholder,
 };

@@ -1,0 +1,45 @@
+<svg width="320" height="320" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg"
+  role="img" aria-labelledby="logoTitle logoDesc">
+  <title id="logoTitle">vue-mdr logo</title>
+  <desc id="logoDesc">A compact vue-mdr logo using a Vue style V inside a markdown card.</desc>
+  <defs>
+    <linearGradient id="bg" x1="48" y1="34" x2="278" y2="294" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#08111F" />
+      <stop offset="1" stop-color="#102A43" />
+    </linearGradient>
+    <linearGradient id="glow" x1="66" y1="58" x2="252" y2="248" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#42B883" />
+      <stop offset="1" stop-color="#5ED8FF" />
+    </linearGradient>
+    <filter id="shadow" x="20" y="20" width="280" height="280" filterUnits="userSpaceOnUse"
+      color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix" />
+      <feColorMatrix in="SourceAlpha" type="matrix"
+        values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+      <feOffset dy="16" />
+      <feGaussianBlur stdDeviation="20" />
+      <feComposite in2="hardAlpha" operator="out" />
+      <feColorMatrix type="matrix"
+        values="0 0 0 0 0.0117647 0 0 0 0 0.054902 0 0 0 0 0.145098 0 0 0 0.38 0" />
+      <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_1_1" />
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1_1" result="shape" />
+    </filter>
+  </defs>
+
+  <g filter="url(#shadow)">
+    <rect x="40" y="32" width="240" height="240" rx="52" fill="url(#bg)" />
+    <rect x="58" y="50" width="204" height="204" rx="40" fill="#0D1B2A" />
+    <rect x="74" y="68" width="172" height="172" rx="32" fill="#101B2C" stroke="url(#glow)"
+      stroke-opacity="0.4" stroke-width="2" />
+
+    <path d="M106 104L160 197L214 104H183.1L160 144L136.9 104H106Z" fill="#42B883" />
+    <path d="M136.9 104L160 144L183.1 104H166.7L160 115.5L153.3 104H136.9Z" fill="#35495E" />
+
+    <path d="M108 188H171" stroke="#7DD3FC" stroke-width="10" stroke-linecap="round" opacity="0.95" />
+    <path d="M108 211H149" stroke="#FACC15" stroke-width="10" stroke-linecap="round" opacity="0.95" />
+    <path d="M197 184L221 199L197 214" stroke="#E5F3FF" stroke-width="8" stroke-linecap="round"
+      stroke-linejoin="round" />
+    <circle cx="223" cy="106" r="10" fill="#42B883" fill-opacity="0.18" />
+    <circle cx="223" cy="106" r="4" fill="#42B883" />
+  </g>
+</svg>

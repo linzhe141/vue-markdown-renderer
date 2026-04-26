@@ -8,10 +8,11 @@ import {
   CodeBlockRenderer,
   MermaidRenderer,
   EchartRenderer,
+  ImageRenderer,
   TableRenderer,
   Placeholder,
 } from ".";
-import Link from "./Link.vue";
+import ARenderer from "./ARenderer.vue";
 
 export const MarkdownRenderer = createMarkdownRenderer({
   componentsMap: {
@@ -19,7 +20,8 @@ export const MarkdownRenderer = createMarkdownRenderer({
     Placeholder,
     // html 标签的渲染也可以通过这个componentsMap来覆盖
     // !除了pre，pre已经内置使用了
-    a: Link,
+    a: ARenderer,
+    img: ImageRenderer,
   },
   codeBlock: {
     renderer: CodeBlockRenderer,
