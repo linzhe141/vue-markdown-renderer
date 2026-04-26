@@ -1,7 +1,7 @@
 import type { Element, ElementContent, Text } from "hast";
 import { defineComponent, h, inject, type PropType } from "vue";
 import { ApiOptions } from "../apiCreateMarkdownRender.js";
-import { generateVueNode } from "../jsx.js";
+import { useJsxRuntime } from "../jsx.js";
 
 type TableCellElement = Element & {
   tagName: "th" | "td";
@@ -138,6 +138,7 @@ const RawRender = defineComponent({
     },
   },
   setup(props) {
+    const generateVueNode = useJsxRuntime();
     return () => {
       const thead = h(
         "thead",

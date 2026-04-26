@@ -100,6 +100,7 @@ export const ShikiStreamCodeBlock = defineComponent({
         return h(CodeBlockRenderer, {
           highlightVnode,
           language,
+          code: codeChunk,
         });
       }
       return highlightVnode;

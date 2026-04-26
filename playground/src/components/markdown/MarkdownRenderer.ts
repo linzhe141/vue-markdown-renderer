@@ -11,11 +11,15 @@ import {
   TableRenderer,
   Placeholder,
 } from ".";
+import Link from "./Link.vue";
 
 export const MarkdownRenderer = createMarkdownRenderer({
   componentsMap: {
     BarChart,
     Placeholder,
+    // html 标签的渲染也可以通过这个componentsMap来覆盖
+    // !除了pre，pre已经内置使用了
+    a: Link,
   },
   codeBlock: {
     renderer: CodeBlockRenderer,

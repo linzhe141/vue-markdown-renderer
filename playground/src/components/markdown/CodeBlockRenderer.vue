@@ -4,6 +4,7 @@ import { ref, computed, VNode, watchEffect } from "vue";
 const props = defineProps<{
   highlightVnode: VNode;
   language: string;
+  code: string;
 }>();
 
 const copied = ref(false);
@@ -11,7 +12,7 @@ const contentRef = ref<HTMLElement>();
 
 function copyHandle() {
   if (!contentRef.value) return;
-  navigator.clipboard.writeText(contentRef.value.textContent || "");
+  navigator.clipboard.writeText(props.code);
   copied.value = true;
   setTimeout(() => (copied.value = false), 2000);
 }

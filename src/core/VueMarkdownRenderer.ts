@@ -3,7 +3,7 @@ import { VFile } from "vfile";
 import { type Processor } from "unified";
 import { ShikiProvider } from "./highlight/ShikiProvider.js";
 import { provideProxyProps } from "./useProxyProps.js";
-import { generateVueNode } from "./jsx.js";
+import { useJsxRuntime } from "./jsx.js";
 
 export default defineComponent({
   name: "VueMarkdownRenderer",
@@ -33,6 +33,8 @@ export default defineComponent({
       file.value = md;
       return file;
     };
+
+    const generateVueNode = useJsxRuntime();
 
     const computedVNode = computed(() => {
       const file = createFile(props.source);
