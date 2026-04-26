@@ -18,7 +18,7 @@ const streamParams: [chunkSize: number, delay: number] = IS_THINK_DEMO
   ? [5, 30]
   : IS_BI_DEMO
     ? [10, 20]
-    : [40, 100];
+    : [10, 100];
 const parseNodes = ref<ParseNode[]>([]);
 
 async function clickHandle() {

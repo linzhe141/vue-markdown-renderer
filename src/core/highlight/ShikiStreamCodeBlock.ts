@@ -10,7 +10,15 @@ const FALLBACK_LANG = "ts";
 export const ShikiStreamCodeBlock = defineComponent({
   name: "pre-wrapper",
   props: {
-    nodeJSON: {
+    meta: {
+      type: String,
+      required: true,
+    },
+    lang: {
+      type: String,
+      required: true,
+    },
+    code: {
       type: String,
       required: true,
     },
@@ -27,62 +35,42 @@ export const ShikiStreamCodeBlock = defineComponent({
     });
 
     function getCodeMeta() {
-      const node = JSON.parse(props.nodeJSON);
       const loadedLangs = highlighter!.value!.getLoadedLanguages();
-      let language = "";
+      let language = props.lang;
       let code = "";
-      const codeNode = node.children[0];
-      if (
-        codeNode &&
-        codeNode.type === "element" &&
-        codeNode.tagName === "code"
-      ) {
-        const codeTextNode = codeNode.children[0];
-        if (codeTextNode.type === "text") {
-          const className = codeNode.properties.className as string[];
-          if (className) {
-            const languageClass = className.find((i) =>
-              i.includes("language")
-            ) as string;
 
-            let [_, languageName] = languageClass.split("-");
-            language = languageName;
-          }
+      const lastChar = props.code[props.code.length - 1];
+      const codeText = props.code.slice(
+        0,
+        props.code.length - (lastChar === "\n" ? 1 : 0)
+      );
+      const lines = codeText.split("\n");
+      const lastLine = lines[lines.length - 1];
 
-          const lastChar = codeTextNode.value[codeTextNode.value.length - 1];
-          const codeText = codeTextNode.value.slice(
-            0,
-            codeTextNode.value.length - (lastChar === "\n" ? 1 : 0)
-          );
-          const lines = codeText.split("\n");
-          const lastLine = lines[lines.length - 1];
-
-          let matchedMaybeMarkdownCodeblockCount = 0;
-          if (language === "markdown") {
-            for (const line of lines) {
-              if (line.trimStart().startsWith("`")) {
-                matchedMaybeMarkdownCodeblockCount++;
-              }
-            }
-          }
-
-          if (
-            lines.length > 1 &&
-            lastLine &&
-            lastLine.trimStart().startsWith("`")
-          ) {
-            if (
-              language === "markdown" &&
-              matchedMaybeMarkdownCodeblockCount % 2 === 0
-            ) {
-              code = codeText;
-            } else {
-              code = lines.slice(0, lines.length - 1).join("\n");
-            }
-          } else {
-            code = codeText;
+      let matchedMaybeMarkdownCodeblockCount = 0;
+      if (language === "markdown") {
+        for (const line of lines) {
+          if (line.trimStart().startsWith("`")) {
+            matchedMaybeMarkdownCodeblockCount++;
           }
         }
+      }
+
+      if (
+        lines.length > 1 &&
+        lastLine &&
+        lastLine.trimStart().startsWith("`")
+      ) {
+        if (
+          language === "markdown" &&
+          matchedMaybeMarkdownCodeblockCount % 2 === 0
+        ) {
+          code = codeText;
+        } else {
+          code = lines.slice(0, lines.length - 1).join("\n");
+        }
+      } else {
+        code = codeText;
       }
       let highlightLang = language;
       if (!loadedLangs.includes(highlightLang)) highlightLang = FALLBACK_LANG;

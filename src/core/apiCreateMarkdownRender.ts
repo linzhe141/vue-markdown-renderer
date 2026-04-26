@@ -9,9 +9,7 @@ import type { Schema } from "hast-util-sanitize";
 
 import deepmerge from "deepmerge";
 
-import { remarkComponentCodeBlock } from "./plugin/remarkComponentCodeBlock.js";
-import { remarkEchartCodeBlock } from "./plugin/remarkEchartCodeBlock.js";
-import { remarkMermaidCodeBlock } from "./plugin/remarkMermaidCodeBlock.js";
+import { remarkCodeMeta } from "./plugin/remarkCodeBlock.js";
 import { remarkCompleteTable } from "./plugin/remarkTable.js";
 import { rehypeTable } from "./plugin/rehypeTable.js";
 import { rehypeSegmentText } from "./plugin/rehypeSegmentText.js";
@@ -49,11 +47,11 @@ export function createMarkdownRenderer(options?: ApiOptions) {
   const processor = unified()
     .use(remarkParse)
     .use(remarkGfm)
-    .use(remarkComponentCodeBlock)
-    .use(remarkEchartCodeBlock)
-    .use(remarkMermaidCodeBlock)
+    // .use(remarkEchartCodeBlock)
+    // .use(remarkMermaidCodeBlock)
     .use(remarkCompleteTable)
     .use(options.remarkPlugins ?? [])
+    .use(remarkCodeMeta)
     .use(remarkRehype, options.remarkRehypeOptions || {})
     .use(rehypeSegmentText)
     .use(rehypeRaw)

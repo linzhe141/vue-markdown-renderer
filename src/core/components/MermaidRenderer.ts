@@ -1,44 +1,20 @@
-import { visit } from "unist-util-visit";
 import { defineComponent, h, inject, ref, watch } from "vue";
-import mermaid from "mermaid";
 import { ApiOptions } from "../apiCreateMarkdownRender.js";
-
-export const htag = "MermaidRenderer".toLowerCase();
-export const hprops = ["source"] as const;
-type Properties = Partial<Record<(typeof hprops)[number], string>>;
-
-export const remarkMermaidCodeBlock = () => {
-  return (tree) => {
-    visit(tree, "code", (node, index, parent) => {
-      if (node.lang === "mermaid") {
-        const mermaid = {
-          type: "element",
-          data: {
-            hName: htag,
-            hProperties: {
-              source: node.value,
-            } satisfies Properties,
-          },
-        };
-        parent.children.splice(index, 1, mermaid);
-      }
-    });
-  };
-};
+import mermaid from "mermaid";
 
 export const MermaidRenderer = defineComponent({
   name: "mermaid-renderer",
   inheritAttrs: false,
   props: {
-    node: {
-      type: Object,
+    code: {
+      type: String,
       required: true,
     },
   },
+
   setup(props) {
     return () => {
-      const node = props.node;
-      const source = node.properties.source;
+      const source = props.code;
       return h(Render, { source });
     };
   },

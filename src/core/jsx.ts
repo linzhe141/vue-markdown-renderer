@@ -1,28 +1,16 @@
 import { Fragment } from "vue/jsx-runtime";
 import { toJsxRuntime } from "hast-util-to-jsx-runtime";
-import {
-  ComponentCodeBlockRenderer,
-  htag as ComponentCodeBlockRendererTag,
-} from "./plugin/remarkComponentCodeBlock.js";
-import {
-  EchartCodeBlockRenderer,
-  htag as EchartCodeBlockRendererTag,
-} from "./plugin/remarkEchartCodeBlock.js";
-import {
-  MermaidRenderer,
-  htag as MermaidRendererTag,
-} from "./plugin/remarkMermaidCodeBlock.js";
+
 import { ShikiStreamCodeBlock } from "./highlight/ShikiStreamCodeBlock.js";
 import { TableRenderer } from "./plugin/rehypeTable.js";
 import { h } from "vue";
+import { ComponentCodeBlockRenderer } from "./components/ComponentCodeBlockRenderer.js";
+import { EchartCodeBlockRenderer } from "./components/EchartCodeBlockRenderer.js";
+import { MermaidRenderer } from "./components/MermaidRenderer.js";
 
 export function generateVueNode(tree: any) {
   const vueVnode = toJsxRuntime(tree, {
     components: {
-      pre: ShikiStreamCodeBlock,
-      [ComponentCodeBlockRendererTag]: ComponentCodeBlockRenderer,
-      [EchartCodeBlockRendererTag]: EchartCodeBlockRenderer,
-      [MermaidRendererTag]: MermaidRenderer,
       TableRenderer,
     },
     Fragment,
@@ -44,14 +32,21 @@ function jsx(type: any, props: Record<any, any>, key: any) {
   if (type === Fragment) {
     return h(type, props, children);
   } else if (typeof type !== "string") {
-    if (type === ShikiStreamCodeBlock) {
-      // todo refactor
-      // 使用json字符串作为prop的目的是防止ShikiStreamCodeBlock组件不必要的re-render
-      const nodeJSON = JSON.stringify(props.node);
-      delete props.node;
-      return h(type, { ...props, nodeJSON });
-    }
     return h(type, props);
   }
-  return h(type, props, children);
+
+  if (type === "pre") {
+    const { meta, lang, code } = props;
+    console.log(props);
+    const langToBuildInComponentMap = {
+      echarts: EchartCodeBlockRenderer,
+      mermaid: MermaidRenderer,
+      "component-json": ComponentCodeBlockRenderer,
+    };
+    const targetComponent =
+      langToBuildInComponentMap[lang] ?? ShikiStreamCodeBlock;
+    return h(targetComponent, { meta, lang, code });
+  } else {
+    return h(type, props, children);
+  }
 }
