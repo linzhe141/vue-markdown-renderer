@@ -7,9 +7,6 @@ export function buildSanitizeSchema(): typeof defaultSchema {
     attributes: {
       ...defaultSchema.attributes,
       pre: [...(defaultSchema.attributes?.pre ?? []), "meta", "lang", "code"],
-      // [EchartCodeBlockRenderer]:
-      //   EchartCodeBlockRendererProps as unknown as string[],
-      // [MermaidRenderer]: MermaidRendererProps as unknown as string[],
     },
   };
   return sanitizeSchema;

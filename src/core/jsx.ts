@@ -17,8 +17,6 @@ export function generateVueNode(tree: any) {
     jsx: jsx,
     jsxs: jsx,
     passKeys: true,
-    // refactor 重构 不需要node，为了不必要的re-render
-    passNode: true,
   });
   return vueVnode;
 }

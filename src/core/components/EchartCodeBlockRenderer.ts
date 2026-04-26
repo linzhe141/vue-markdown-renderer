@@ -1,15 +1,12 @@
 import { computed, defineComponent, h, inject } from "vue";
 import { ApiOptions } from "../apiCreateMarkdownRender.js";
+import { parseJson } from "../parseJson.js";
 
 export const EchartCodeBlockRenderer = defineComponent({
   name: "echart-code-block-renderer",
   inheritAttrs: false,
   props: {
     meta: {
-      type: String,
-      required: true,
-    },
-    lang: {
       type: String,
       required: true,
     },
@@ -26,23 +23,15 @@ export const EchartCodeBlockRenderer = defineComponent({
       throw new Error(`echartRenderer must be provided`);
     }
     const EchartRendererPlaceholder = options.echart?.placeholder;
-
-    const showPlaceholder = computed(() => {
-      if (!props.code) return true;
-      try {
-        JSON.parse(props.code);
-        return false;
-      } catch (e) {
-        return true;
-      }
-    });
+    const parsedCode = computed(() =>
+      parseJson<Record<string, unknown>>(props.code)
+    );
     return () => {
-      if (showPlaceholder.value) {
+      if (!parsedCode.value) {
         return h(EchartRendererPlaceholder || Placeholder);
       }
-      const config = JSON.parse(props.code);
       return h(EchartRenderer, {
-        option: config,
+        option: parsedCode.value,
       });
     };
   },

@@ -51,12 +51,7 @@ const Render = defineComponent({
         ? h(MermaidRenderer, { img: blobUrl.value, source: props.source })
         : h(
             "div",
-            {
-              style: {
-                display: "flex",
-                justifyContent: "center",
-              },
-            },
+            { style: { display: "flex", justifyContent: "center" } },
             blobUrl &&
               h("img", { src: blobUrl.value, style: { height: "500px" } })
           );
