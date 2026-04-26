@@ -27,7 +27,7 @@ export const rehypeTable: Plugin<[], Root> = () => {
         },
         children: [],
       };
-      parent.children[index] = tableNode;
+      parent.children.splice(index, 1, tableNode);
     });
   };
 };

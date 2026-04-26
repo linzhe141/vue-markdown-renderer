@@ -40,7 +40,7 @@ function getCodeValue(children: Text[]): string {
   return children.map((child) => child.value).join("");
 }
 
-export const rehypeCodeMeta: Plugin<[], Root> = () => {
+export const rehypeCodeBlock: Plugin<[], Root> = () => {
   return (tree) => {
     visit(tree, "element", (node) => {
       if (!isPreElement(node)) return;

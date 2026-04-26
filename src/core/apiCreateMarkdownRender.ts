@@ -6,11 +6,10 @@ import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
 import type { Schema } from "hast-util-sanitize";
-
 import deepmerge from "deepmerge";
 
-import { rehypeCodeMeta } from "./plugin/remarkCodeBlock.js";
 import { remarkCompleteTable } from "./plugin/remarkTable.js";
+import { rehypeCodeBlock } from "./plugin/rehypeCodeBlock.js";
 import { rehypeTable } from "./plugin/rehypeTable.js";
 import { rehypeSegmentText } from "./plugin/rehypeSegmentText.js";
 
@@ -56,7 +55,8 @@ export function createMarkdownRenderer(options?: ApiOptions) {
       rehypeSanitize,
       deepmerge(buildSanitizeSchema(), options.rehypeSanitizeSchema || {})
     )
-    .use(rehypeCodeMeta)
+    // code block 的 rehype 插件必须放在 rehypeRaw 之后，rehypeTable 的 rehype 插件必须放在 rehypeCodeBlock 之后
+    .use(rehypeCodeBlock)
     .use(rehypeTable)
     .use(options.rehypePlugins ?? []);
 
