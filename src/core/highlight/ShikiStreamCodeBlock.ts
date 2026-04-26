@@ -12,11 +12,11 @@ export const ShikiStreamCodeBlock = defineComponent({
   props: {
     meta: {
       type: String,
-      required: true,
+      required: false,
     },
     lang: {
       type: String,
-      required: true,
+      required: false,
     },
     code: {
       type: String,
@@ -36,9 +36,8 @@ export const ShikiStreamCodeBlock = defineComponent({
 
     function getCodeMeta() {
       const loadedLangs = highlighter!.value!.getLoadedLanguages();
-      let language = props.lang;
+      let language = props.lang ?? "";
       let code = "";
-
       const lastChar = props.code[props.code.length - 1];
       const codeText = props.code.slice(
         0,

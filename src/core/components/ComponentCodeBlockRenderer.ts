@@ -9,10 +9,6 @@ export const ComponentCodeBlockRenderer = defineComponent({
       type: String,
       required: true,
     },
-    lang: {
-      type: String,
-      required: true,
-    },
     code: {
       type: String,
       required: true,
@@ -23,6 +19,8 @@ export const ComponentCodeBlockRenderer = defineComponent({
     const options = inject("markdown-renderer-options") as ApiOptions;
     const computedComponentsMap = options.componentsMap;
     const showPlaceholder = computed(() => {
+      if (!props.meta) return true;
+      if (!props.code) return true;
       try {
         JSON.parse(props.code);
         return false;

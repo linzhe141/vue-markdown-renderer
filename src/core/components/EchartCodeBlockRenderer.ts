@@ -28,6 +28,7 @@ export const EchartCodeBlockRenderer = defineComponent({
     const EchartRendererPlaceholder = options.echart?.placeholder;
 
     const showPlaceholder = computed(() => {
+      if (!props.code) return true;
       try {
         JSON.parse(props.code);
         return false;

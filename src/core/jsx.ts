@@ -37,7 +37,6 @@ function jsx(type: any, props: Record<any, any>, key: any) {
 
   if (type === "pre") {
     const { meta, lang, code } = props;
-    console.log(props);
     const langToBuildInComponentMap = {
       echarts: EchartCodeBlockRenderer,
       mermaid: MermaidRenderer,
@@ -45,6 +44,7 @@ function jsx(type: any, props: Record<any, any>, key: any) {
     };
     const targetComponent =
       langToBuildInComponentMap[lang] ?? ShikiStreamCodeBlock;
+
     return h(targetComponent, { meta, lang, code });
   } else {
     return h(type, props, children);
