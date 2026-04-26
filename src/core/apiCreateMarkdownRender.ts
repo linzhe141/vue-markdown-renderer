@@ -47,8 +47,6 @@ export function createMarkdownRenderer(options?: ApiOptions) {
   const processor = unified()
     .use(remarkParse)
     .use(remarkGfm)
-    // .use(remarkEchartCodeBlock)
-    // .use(remarkMermaidCodeBlock)
     .use(remarkCompleteTable)
     .use(options.remarkPlugins ?? [])
     .use(remarkCodeMeta)

@@ -36,7 +36,7 @@ const Render = defineComponent({
           blobUrl.value = URL.createObjectURL(blob);
         }
       } catch (e) {
-        console.log("mermaid 格式错误");
+        console.log("mermaid parse error skip rendering");
       }
     };
     watch(() => props.source, parse, { immediate: true });
