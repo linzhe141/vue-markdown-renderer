@@ -1,12 +1,11 @@
 import { Fragment } from "vue/jsx-runtime";
 import { toJsxRuntime } from "hast-util-to-jsx-runtime";
-
-import { ShikiStreamCodeBlock } from "./highlight/ShikiStreamCodeBlock.js";
 import { h, inject } from "vue";
 import { ComponentCodeBlockRenderer } from "./components/ComponentCodeBlockRenderer.js";
 import { EchartCodeBlockRenderer } from "./components/EchartCodeBlockRenderer.js";
 import { MermaidRenderer } from "./components/MermaidRenderer.js";
 import { TableRenderer } from "./components/TableRenderer.js";
+import { CodeBlockRenderer } from "./components/CodeBlockRenderer.js";
 import { ApiOptions } from "./apiCreateMarkdownRender.js";
 
 export function useJsxRuntime() {
@@ -46,8 +45,7 @@ function jsx(type: any, props: Record<any, any>, key: any) {
       "component-json": ComponentCodeBlockRenderer,
     };
     const targetComponent =
-      langToBuildInComponentMap[lang] ?? ShikiStreamCodeBlock;
-
+      langToBuildInComponentMap[lang] ?? CodeBlockRenderer;
     return h(targetComponent, { meta, lang, code });
   } else {
     return h(type, props, children);

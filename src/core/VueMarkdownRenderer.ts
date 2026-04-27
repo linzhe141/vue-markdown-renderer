@@ -17,9 +17,9 @@ export default defineComponent({
       required: true,
     },
   },
-  // errorCaptured(e) {
-  //   console.error("VueMarkdownRenderer captured error", e);
-  // },
+  errorCaptured(e) {
+    console.error("VueMarkdownRenderer captured error", e);
+  },
   setup(props) {
     const processor = inject("markdown-renderer-processor") as Processor<
       any,
