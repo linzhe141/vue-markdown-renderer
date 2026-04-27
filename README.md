@@ -83,6 +83,10 @@ export const MarkdownRenderer = createMarkdownRenderer({
   componentsMap: {
     BarChart,
     Placeholder,
+    // The rendering of HTML tags can also be overridden using this componentMap
+    // !However, besides `pre`, which already uses it built-in
+    a: ARenderer,
+    img: ImageRenderer,
   },
 
   /**
