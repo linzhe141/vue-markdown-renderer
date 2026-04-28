@@ -6,10 +6,10 @@ import { EchartCodeBlockRenderer } from "./components/EchartCodeBlockRenderer.js
 import { MermaidRenderer } from "./components/MermaidRenderer.js";
 import { TableRenderer } from "./components/TableRenderer.js";
 import { CodeBlockRenderer } from "./components/CodeBlockRenderer.js";
-import { ApiOptions } from "./apiCreateMarkdownRender.js";
+import { markdownRendererOptionsKey } from "./symbol.js";
 
 export function useJsxRuntime() {
-  const options = inject("markdown-renderer-options") as ApiOptions;
+  const options = inject(markdownRendererOptionsKey)!;
 
   function generateVueNode(tree: any) {
     const vueVnode = toJsxRuntime(tree, {

@@ -2,9 +2,15 @@ import { type ElementContent, type Root } from "hast";
 import type { Plugin } from "unified";
 import { visit } from "unist-util-visit";
 
-const segmenter = new Intl.Segmenter("zh", { granularity: "word" });
+type Options = {
+  locale?: string;
+};
 
-export const rehypeSegmentText: Plugin<[], Root> = () => {
+export const rehypeSegmentText: Plugin<[Options?], Root> = (options) => {
+  const segmenter = new Intl.Segmenter(options?.locale ?? "zh", {
+    granularity: "word",
+  });
+
   return (tree) => {
     visit(tree, "element", (node) => {
       if (

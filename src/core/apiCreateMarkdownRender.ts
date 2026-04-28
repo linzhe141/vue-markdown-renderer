@@ -15,6 +15,10 @@ import { rehypeSegmentText } from "./plugin/rehypeSegmentText.js";
 
 import VueMarkdownRenderer from "./VueMarkdownRenderer.js";
 import { buildSanitizeSchema } from "./buildSanitizeSchema.js";
+import {
+  markdownRendererOptionsKey,
+  markdownRendererProcessorKey,
+} from "./symbol.js";
 
 interface RemarkRehypeOptions {
   allowDangerousHtml?: boolean;
@@ -39,6 +43,7 @@ export type ApiOptions = {
   remarkPlugins?: Plugin[];
   remarkRehypeOptions?: RemarkRehypeOptions;
   rehypeSanitizeSchema?: Schema;
+  textSegmenterLocale?: string;
 };
 
 export function createMarkdownRenderer(options?: ApiOptions) {
@@ -49,7 +54,7 @@ export function createMarkdownRenderer(options?: ApiOptions) {
     .use(remarkCompleteTable)
     .use(options.remarkPlugins ?? [])
     .use(remarkRehype, options.remarkRehypeOptions || {})
-    .use(rehypeSegmentText)
+    .use(rehypeSegmentText, { locale: options.textSegmenterLocale })
     .use(rehypeRaw)
     .use(
       rehypeSanitize,
@@ -73,8 +78,8 @@ export function createMarkdownRenderer(options?: ApiOptions) {
       },
     },
     setup(props) {
-      provide("markdown-renderer-options", options);
-      provide("markdown-renderer-processor", processor);
+      provide(markdownRendererOptionsKey, options);
+      provide(markdownRendererProcessorKey, processor);
       return () =>
         h(VueMarkdownRenderer, {
           source: props.source,

@@ -13,9 +13,9 @@ import { useShiki } from "../highlight/ShikiProvider";
 import { defaultLangs } from "../highlight/shiki";
 import { ShikiStreamTokenizer } from "shiki-stream";
 import { ThemedToken } from "shiki/dist/core-unwasm.mjs";
-import { ApiOptions } from "../apiCreateMarkdownRender";
 import { THEME } from "../highlight/codeTheme";
 import { useProxyProps } from "../useProxyProps";
+import { markdownRendererOptionsKey } from "../symbol";
 
 const FALLBACK_LANG = "ts";
 export const CodeBlockRenderer = defineComponent({
@@ -74,7 +74,7 @@ export const CodeBlock = defineComponent({
 
     const highlightVnode = useHighlightVnode(tokens);
 
-    const { codeBlock } = inject("markdown-renderer-options") as ApiOptions;
+    const { codeBlock } = inject(markdownRendererOptionsKey)!;
     const CodeBlockRenderer = codeBlock?.renderer;
     return () => {
       if (CodeBlockRenderer) {
@@ -154,7 +154,7 @@ export const StreamBlock = defineComponent({
     const lineTokens = computed(() => tokensToLineTokens(tokens.value));
     const highlightVnode = useHighlightVnode(lineTokens);
 
-    const { codeBlock } = inject("markdown-renderer-options") as ApiOptions;
+    const { codeBlock } = inject(markdownRendererOptionsKey)!;
     const CodeBlockRenderer = codeBlock?.renderer;
 
     return () => {

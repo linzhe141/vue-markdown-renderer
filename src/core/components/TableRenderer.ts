@@ -1,6 +1,6 @@
 import type { Element, ElementContent, Text } from "hast";
 import { defineComponent, h, inject, type PropType } from "vue";
-import { ApiOptions } from "../apiCreateMarkdownRender.js";
+import { markdownRendererOptionsKey } from "../symbol.js";
 import { useJsxRuntime } from "../jsx.js";
 
 type TableCellElement = Element & {
@@ -67,8 +67,12 @@ function extractRows(sectionNode: TableSectionElement): TableRows {
 }
 
 function extractTable(tableNode: TableAst) {
-  const theadNode = tableNode.children.find((node) => isElementTag(node, "thead"));
-  const tbodyNode = tableNode.children.find((node) => isElementTag(node, "tbody"));
+  const theadNode = tableNode.children.find((node) =>
+    isElementTag(node, "thead")
+  );
+  const tbodyNode = tableNode.children.find((node) =>
+    isElementTag(node, "tbody")
+  );
 
   return {
     thead: theadNode ? extractRows(theadNode as TableSectionElement) : [],
@@ -98,7 +102,7 @@ export const TableRenderer = defineComponent({
     },
   },
   setup(props) {
-    const { table } = inject("markdown-renderer-options") as ApiOptions;
+    const { table } = inject(markdownRendererOptionsKey)!;
 
     return () => {
       const { thead, tbody } = extractTable(props.ast);

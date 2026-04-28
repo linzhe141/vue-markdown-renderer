@@ -1,9 +1,9 @@
 import { h, defineComponent, type PropType, computed, inject } from "vue";
 import { VFile } from "vfile";
-import { type Processor } from "unified";
 import { ShikiProvider } from "./highlight/ShikiProvider.js";
 import { provideProxyProps } from "./useProxyProps.js";
 import { useJsxRuntime } from "./jsx.js";
+import { markdownRendererProcessorKey } from "./symbol.js";
 
 export default defineComponent({
   name: "VueMarkdownRenderer",
@@ -21,11 +21,7 @@ export default defineComponent({
     console.error("VueMarkdownRenderer captured error", e);
   },
   setup(props) {
-    const processor = inject("markdown-renderer-processor") as Processor<
-      any,
-      any,
-      any
-    >;
+    const processor = inject(markdownRendererProcessorKey)!;
     provideProxyProps(props);
 
     const createFile = (md: string) => {

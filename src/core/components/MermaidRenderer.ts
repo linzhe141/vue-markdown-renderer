@@ -1,6 +1,8 @@
 import { defineComponent, h, inject, ref, watch } from "vue";
-import { ApiOptions } from "../apiCreateMarkdownRender.js";
+import { markdownRendererOptionsKey } from "../symbol.js";
 import mermaid from "mermaid";
+
+let mermaidIdCounter = 0;
 
 export const MermaidRenderer = defineComponent({
   name: "mermaid-renderer",
@@ -24,11 +26,12 @@ const Render = defineComponent({
   props: ["source"],
   setup(props) {
     const blobUrl = ref("");
+    const renderId = `mermaid-wrapper-${++mermaidIdCounter}`;
     const parse = async () => {
       try {
         const isValid = await mermaid.parse(props.source);
         if (isValid) {
-          const { svg } = await mermaid.render("mermaid-wrapper", props.source);
+          const { svg } = await mermaid.render(renderId, props.source);
           const blob = new Blob([svg], {
             type: "image/svg+xml",
           });
@@ -42,8 +45,8 @@ const Render = defineComponent({
     watch(() => props.source, parse, { immediate: true });
 
     const { mermaid: mermaidOption } = inject(
-      "markdown-renderer-options"
-    ) as ApiOptions;
+      markdownRendererOptionsKey
+    )!;
 
     const MermaidRenderer = mermaidOption?.renderer;
     return () => {

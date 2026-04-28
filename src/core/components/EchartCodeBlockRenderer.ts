@@ -1,5 +1,5 @@
 import { computed, defineComponent, h, inject } from "vue";
-import { ApiOptions } from "../apiCreateMarkdownRender.js";
+import { markdownRendererOptionsKey } from "../symbol.js";
 import { parseJson } from "../parseJson.js";
 
 export const EchartCodeBlockRenderer = defineComponent({
@@ -17,7 +17,7 @@ export const EchartCodeBlockRenderer = defineComponent({
   },
 
   setup(props) {
-    const options = inject("markdown-renderer-options") as ApiOptions;
+    const options = inject(markdownRendererOptionsKey)!;
     const EchartRenderer = options.echart?.renderer;
     if (!EchartRenderer) {
       throw new Error(`echartRenderer must be provided`);

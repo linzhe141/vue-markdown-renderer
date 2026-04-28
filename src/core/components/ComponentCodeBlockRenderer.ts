@@ -1,5 +1,5 @@
 import { computed, defineComponent, h, inject } from "vue";
-import { ApiOptions } from "../apiCreateMarkdownRender.js";
+import { markdownRendererOptionsKey } from "../symbol.js";
 import { parseJson } from "../parseJson.js";
 
 type ComponentBlockMeta = {
@@ -27,9 +27,11 @@ export const ComponentCodeBlockRenderer = defineComponent({
   },
 
   setup(props) {
-    const options = inject("markdown-renderer-options") as ApiOptions;
+    const options = inject(markdownRendererOptionsKey)!;
     const computedComponentsMap = options.componentsMap;
-    const parsedMeta = computed(() => parseJson<ComponentBlockMeta>(props.meta));
+    const parsedMeta = computed(() =>
+      parseJson<ComponentBlockMeta>(props.meta)
+    );
     const parsedCode = computed(() =>
       parseJson<ComponentBlockPayload>(props.code)
     );
