@@ -2,7 +2,7 @@
 import { computed, ref } from "vue";
 
 const props = defineProps<{
-  href: string;
+  href?: string;
 }>();
 
 const webSearchUrls = ref([
@@ -76,9 +76,7 @@ const onLeave = () => {
         />
 
         <!-- domain -->
-        <div class="mb-1 flex items-center gap-1 text-xs text-gray-500">
-          🌐 {{ hostname }}
-        </div>
+        <div class="mb-1 flex items-center gap-1 text-xs text-gray-500">🌐</div>
 
         <!-- title -->
         <div class="line-clamp-2 text-sm font-medium text-gray-800">

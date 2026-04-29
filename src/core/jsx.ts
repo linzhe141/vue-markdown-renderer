@@ -14,9 +14,10 @@ export function useJsxRuntime() {
   function generateVueNode(tree: any) {
     const vueVnode = toJsxRuntime(tree, {
       components: {
+        ...(options.componentsMap || {}),
+        // 内置组件不可替换
         // 这个对应的plugin 在rehypeSanitize 之后所以跳过了hast阶段
         TableRenderer,
-        ...(options.componentsMap || {}),
       },
       Fragment,
       jsx: jsx,
@@ -37,17 +38,21 @@ function jsx(type: any, props: Record<any, any>, key: any) {
   if (type === Fragment) {
     return h(type, props, children);
   }
-  if (type === "pre") {
-    const { meta, lang, code } = props;
-    const langToBuildInComponentMap = {
-      echarts: EchartCodeBlockRenderer,
-      mermaid: MermaidRenderer,
-      "component-json": ComponentCodeBlockRenderer,
-    };
-    const targetComponent =
-      langToBuildInComponentMap[lang] ?? CodeBlockRenderer;
-    return h(targetComponent, { meta, lang, code });
-  } else {
+  if (typeof type === "string") {
+    // 针对pre标签进行特殊处理，使用内置组件渲染
+    if (type === "pre") {
+      const { meta, lang, code } = props;
+      const langToBuildInComponentMap = {
+        echarts: EchartCodeBlockRenderer,
+        mermaid: MermaidRenderer,
+        "component-json": ComponentCodeBlockRenderer,
+      };
+      const targetComponent =
+        langToBuildInComponentMap[lang] ?? CodeBlockRenderer;
+      return h(targetComponent, { meta, lang, code });
+    }
     return h(type, props, children);
+  } else if (typeof type === "object") {
+    return h(type, props, { default: () => children });
   }
 }
