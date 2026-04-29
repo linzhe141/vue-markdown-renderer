@@ -1,3 +1,7 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 @plugin "@tailwindcss/typography";
+
+html body {
+  overflow: hidden;
+}

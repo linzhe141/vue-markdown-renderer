@@ -114,6 +114,9 @@ importers:
       vue:
         specifier: ^3.5.13
         version: 3.5.17(typescript@5.8.3)
+      vue-stick-to-bottom:
+        specifier: ^1.0.0
+        version: 1.0.0(vue@3.5.17(typescript@5.8.3))
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^6.0.6
@@ -5673,6 +5676,11 @@ packages:
 
   vscode-uri@3.0.8:
     resolution: {integrity: sha512-AyFQ0EVmsOZOlAnxoFOGOq1SQDWAB7C6aqMGS23svWAllfOaxbuFvcT8D1i8z3Gyn8fraVeZNNmN6e9bxxXkKw==}
+
+  vue-stick-to-bottom@1.0.0:
+    resolution: {integrity: sha512-e6OrT4DGsIEZoQ2wiqBJ61j1CmHJVY4dc8TJrndqbuAE+/m2XQ7fzDyakCu2GCxU2qePOcJivYf9Xua54fC6EA==}
+    peerDependencies:
+      vue: '>=3.3.0'
 
   vue-tsc@3.2.6:
     resolution: {integrity: sha512-gYW/kWI0XrwGzd0PKc7tVB/qpdeAkIZLNZb10/InizkQjHjnT8weZ/vBarZoj4kHKbUTZT/bAVgoOr8x4NsQ/Q==}
@@ -13121,6 +13129,10 @@ snapshots:
       vscode-languageserver-protocol: 3.17.5
 
   vscode-uri@3.0.8: {}
+
+  vue-stick-to-bottom@1.0.0(vue@3.5.17(typescript@5.8.3)):
+    dependencies:
+      vue: 3.5.17(typescript@5.8.3)
 
   vue-tsc@3.2.6(typescript@5.8.3):
     dependencies:
