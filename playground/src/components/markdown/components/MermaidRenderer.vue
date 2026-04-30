@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
+import PreviewableImage from "../../PreviewableImage.vue";
 
 const props = defineProps<{
   img: string;
@@ -7,6 +8,8 @@ const props = defineProps<{
 }>();
 
 const copied = ref(false);
+
+const imageLabel = computed(() => "Mermaid diagram");
 
 function copyHandle() {
   navigator.clipboard.writeText(props.source || "");
@@ -63,13 +66,15 @@ Copied!
       </div>
     </div>
 
-    <div
-      class="flex items-center justify-center overflow-auto bg-[linear-gradient(180deg,#f8fafc_0%,#eef2ff_100%)] px-4 py-6 dark:bg-[linear-gradient(180deg,#0f172a_0%,#111827_100%)]"
-    >
-      <img
-        :src="img"
-        class="max-h-[34rem] w-full rounded-xl bg-white/80 object-contain p-2 dark:bg-white"
-      />
-    </div>
+    <PreviewableImage
+      :src="props.img"
+      :alt="imageLabel"
+      :title="imageLabel"
+      :label="imageLabel"
+      subtitle="MERMAID"
+      button-class="group block w-full cursor-zoom-in overflow-auto bg-[linear-gradient(180deg,#f8fafc_0%,#eef2ff_100%)] px-4 py-6 text-left outline-none dark:bg-[linear-gradient(180deg,#0f172a_0%,#111827_100%)]"
+      img-class="max-h-[34rem] w-full rounded-xl bg-white/80 object-contain p-2 transition duration-300 group-hover:scale-[1.01] dark:bg-white"
+      empty-text="Mermaid image is not ready yet"
+    />
   </div>
 </template>

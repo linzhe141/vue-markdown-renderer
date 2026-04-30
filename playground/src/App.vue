@@ -18,7 +18,7 @@ const activePage = IS_THINK_DEMO ? "think" : IS_BI_DEMO ? "bi" : "readme";
 const streamParams: [chunkSize: number, delay: number] = IS_THINK_DEMO
   ? [5, 30]
   : IS_BI_DEMO
-    ? [10, 20]
+    ? [5, 10]
     : [5, 10];
 const parseNodes = ref<ParseNode[]>([]);
 
