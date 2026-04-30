@@ -1,54 +1,51 @@
 <script setup lang="ts">
-const props = defineProps<{
-  // 只提取了 文本内容，如果存在图片或者链接等复杂内容，需要通过 ast 进行更细颗粒度的渲染，要不然会丢失信息
+defineProps<{
   thead: string[];
   tbody: string[][];
-  // 细颗粒度的 AST 信息
   ast: Object;
 }>();
 </script>
 
 <template>
   <div
-    class="relative my-4 w-0 min-w-full overflow-hidden rounded-lg bg-[#ededed] text-sm shadow dark:bg-[#171717]"
+    class="not-prose relative my-6 w-0 min-w-full overflow-hidden rounded-2xl border border-slate-200/70 bg-white text-sm shadow-[0_22px_50px_-30px_rgba(15,23,42,0.45)] dark:border-white/10 dark:bg-[#0f172a]"
   >
-    <!-- 顶部标签行 -->
     <div
-      class="flex items-center justify-between bg-[#2f2f2f] p-2 text-[#cdcdcd]"
+      class="flex items-center justify-between border-b border-black/5 bg-slate-950 px-4 py-3 text-slate-200 dark:border-white/10"
     >
-      <span class="text-xs tracking-wider text-gray-400 uppercase">
+      <span
+        class="text-[11px] font-semibold tracking-[0.22em] text-slate-400 uppercase"
+      >
         TABLE
       </span>
     </div>
 
-    <div class="not-prose px-3 py-2">
+    <div class="px-4 py-4">
       <div
-        class="overflow-hidden rounded-md border border-gray-200 bg-white dark:border-neutral-800 dark:bg-neutral-900"
+        class="overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-white/10 dark:bg-slate-950"
       >
-        <!-- header -->
         <div
-          class="flex bg-gray-100 text-xs font-semibold text-gray-600 dark:bg-neutral-800 dark:text-neutral-300"
+          class="flex bg-slate-50 text-xs font-semibold text-slate-600 dark:bg-slate-900 dark:text-slate-300"
         >
           <div
             v-for="(col, i) in thead"
             :key="i"
-            class="flex-1 border-r border-gray-200 px-3 py-2 last:border-r-0 dark:border-neutral-700"
+            class="flex-1 border-r border-slate-200 px-4 py-3 last:border-r-0 dark:border-white/10"
           >
             {{ col }}
           </div>
         </div>
 
-        <!-- body -->
         <div>
           <div
             v-for="(row, rowIndex) in tbody"
             :key="rowIndex"
-            class="flex text-gray-700 transition-colors odd:bg-white even:bg-gray-50 hover:bg-gray-100 dark:text-neutral-200 dark:odd:bg-neutral-900 dark:even:bg-neutral-800 dark:hover:bg-neutral-700"
+            class="flex text-slate-700 transition-colors odd:bg-white even:bg-slate-50 hover:bg-slate-100 dark:text-slate-200 dark:odd:bg-slate-950 dark:even:bg-slate-900 dark:hover:bg-slate-800"
           >
             <div
               v-for="(cell, cellIndex) in row"
               :key="cellIndex"
-              class="flex-1 border-t border-r border-gray-200 px-3 py-2 last:border-r-0 dark:border-neutral-700"
+              class="flex-1 border-t border-r border-slate-200 px-4 py-3 last:border-r-0 dark:border-white/10"
             >
               {{ cell }}
             </div>

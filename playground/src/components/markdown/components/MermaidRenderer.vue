@@ -17,27 +17,30 @@ function copyHandle() {
 
 <template>
   <div
-    class="relative my-4 w-0 min-w-full overflow-hidden rounded-lg bg-[#ededed] text-sm shadow dark:bg-[#171717]"
+    class="not-prose relative my-6 w-0 min-w-full overflow-hidden rounded-2xl border border-slate-200/70 bg-white text-sm shadow-[0_22px_50px_-30px_rgba(15,23,42,0.45)] dark:border-white/10 dark:bg-[#0f172a]"
   >
-    <!-- 顶部标签行 -->
     <div
-      class="flex items-center justify-between bg-[#2f2f2f] p-2 text-[#cdcdcd]"
+      class="flex items-center justify-between border-b border-black/5 bg-[#2f2f2f] px-4 py-2 text-slate-200 dark:border-white/10"
     >
-      <span class="text-xs tracking-wider text-gray-400 uppercase">
+      <span
+        class="text-[11px] font-semibold tracking-[0.22em] text-slate-400 uppercase"
+      >
         MERMAID
       </span>
 
-      <div class="relative cursor-pointer p-1" @click="copyHandle">
+      <div
+        class="relative cursor-pointer rounded-full p-1.5 transition hover:bg-white/10"
+        @click="copyHandle"
+      >
         <template v-if="copied">
-          <div class="absolute -top-6 -left-16 z-10">
+          <div class="absolute -top-9 right-0 z-10">
             <pre
-              class="rounded bg-slate-100 px-2 py-1 text-sm text-green-500 dark:bg-black"
+              class="rounded-full bg-emerald-50 px-2.5 py-1 text-xs text-emerald-700 shadow dark:bg-emerald-950 dark:text-emerald-300"
             >
 Copied!
 </pre
             >
           </div>
-          <!-- ✅ Check Icon SVG -->
           <svg
             class="h-4 w-4 text-gray-300"
             viewBox="0 0 24 24"
@@ -47,7 +50,6 @@ Copied!
           </svg>
         </template>
         <template v-else>
-          <!-- ✅ Copy Icon SVG -->
           <svg
             class="h-4 w-4 text-gray-300"
             viewBox="0 0 24 24"
@@ -61,12 +63,13 @@ Copied!
       </div>
     </div>
 
-    <!-- 高亮代码区域 -->
     <div
-      ref="contentRef"
-      class="not-prose flex items-center justify-center overflow-auto px-3 py-2"
+      class="flex items-center justify-center overflow-auto bg-[linear-gradient(180deg,#f8fafc_0%,#eef2ff_100%)] px-4 py-6 dark:bg-[linear-gradient(180deg,#0f172a_0%,#111827_100%)]"
     >
-      <img :src="img" />
+      <img
+        :src="img"
+        class="max-h-[34rem] w-full rounded-xl bg-white/80 object-contain p-2 dark:bg-white"
+      />
     </div>
   </div>
 </template>
