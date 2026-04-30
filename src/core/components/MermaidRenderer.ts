@@ -44,14 +44,12 @@ const Render = defineComponent({
     };
     watch(() => props.source, parse, { immediate: true });
 
-    const { mermaid: mermaidOption } = inject(
-      markdownRendererOptionsKey
-    )!;
+    const { renderers } = inject(markdownRendererOptionsKey)!;
 
-    const MermaidRenderer = mermaidOption?.renderer;
+    const CustomMermaidRenderer = renderers.mermaid;
     return () => {
-      return MermaidRenderer
-        ? h(MermaidRenderer, { img: blobUrl.value, source: props.source })
+      return CustomMermaidRenderer
+        ? h(CustomMermaidRenderer, { img: blobUrl.value, source: props.source })
         : h(
             "div",
             { style: { display: "flex", justifyContent: "center" } },

@@ -74,11 +74,11 @@ export const CodeBlock = defineComponent({
 
     const highlightVnode = useHighlightVnode(tokens);
 
-    const { codeBlock } = inject(markdownRendererOptionsKey)!;
-    const CodeBlockRenderer = codeBlock?.renderer;
+    const { renderers } = inject(markdownRendererOptionsKey)!;
+    const CustomCodeBlockRenderer = renderers.codeBlock;
     return () => {
-      if (CodeBlockRenderer) {
-        return h(CodeBlockRenderer, {
+      if (CustomCodeBlockRenderer) {
+        return h(CustomCodeBlockRenderer, {
           highlightVnode: highlightVnode.value,
           language: props.lang,
           code: props.code,
@@ -154,12 +154,12 @@ export const StreamBlock = defineComponent({
     const lineTokens = computed(() => tokensToLineTokens(tokens.value));
     const highlightVnode = useHighlightVnode(lineTokens);
 
-    const { codeBlock } = inject(markdownRendererOptionsKey)!;
-    const CodeBlockRenderer = codeBlock?.renderer;
+    const { renderers } = inject(markdownRendererOptionsKey)!;
+    const CustomCodeBlockRenderer = renderers.codeBlock;
 
     return () => {
-      if (CodeBlockRenderer) {
-        return h(CodeBlockRenderer, {
+      if (CustomCodeBlockRenderer) {
+        return h(CustomCodeBlockRenderer, {
           highlightVnode: highlightVnode.value,
           language: props.lang,
           code: props.code,

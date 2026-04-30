@@ -28,7 +28,7 @@ export const ComponentCodeBlockRenderer = defineComponent({
 
   setup(props) {
     const options = inject(markdownRendererOptionsKey)!;
-    const computedComponentsMap = options.componentsMap;
+    const componentRegistry = options.renderers.components;
     const parsedMeta = computed(() =>
       parseJson<ComponentBlockMeta>(props.meta)
     );
@@ -40,10 +40,10 @@ export const ComponentCodeBlockRenderer = defineComponent({
       const name = placeholderName.value;
       if (!name) return Placeholder;
 
-      const target = computedComponentsMap?.[name];
+      const target = componentRegistry?.[name];
       if (!target) {
         console.warn(
-          `${name} does not exist in componentsMap, the built-in 'Placeholder' will be used instead.`
+          `${name} does not exist in renderers.components, the built-in 'Placeholder' will be used instead.`
         );
       }
       return target || Placeholder;
@@ -56,10 +56,10 @@ export const ComponentCodeBlockRenderer = defineComponent({
         throw new Error(`component-json code block requires a 'type' field.`);
       }
 
-      const component = computedComponentsMap?.[type];
+      const component = componentRegistry?.[type];
       if (!component) {
         throw new Error(
-          `${type} not exist in componentsMap:${JSON.stringify(computedComponentsMap, null, 2)}`
+          `${type} not exist in renderers.components:${JSON.stringify(componentRegistry, null, 2)}`
         );
       }
       return component;

@@ -102,11 +102,11 @@ export const TableRenderer = defineComponent({
     },
   },
   setup(props) {
-    const { table } = inject(markdownRendererOptionsKey)!;
+    const { renderers } = inject(markdownRendererOptionsKey)!;
 
     return () => {
       const { thead, tbody } = extractTable(props.ast);
-      const CustomTableRenderer = table?.renderer;
+      const CustomTableRenderer = renderers.table;
 
       if (CustomTableRenderer) {
         const theadNode = (thead[0] ?? []).map((cell) =>

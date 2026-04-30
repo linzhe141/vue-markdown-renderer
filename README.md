@@ -77,57 +77,41 @@ import {
 } from "./components";
 
 export const MarkdownRenderer = createMarkdownRenderer({
-  /**
-   * Custom Vue components rendered via `component-json` blocks
-   */
-  componentsMap: {
-    BarChart,
-    Placeholder,
-    // The rendering of HTML tags can also be overridden using this componentMap
-    // !However, besides `pre`, which already uses it built-in
-    a: ARenderer,
-    img: ImageRenderer,
+  renderers: {
+    /**
+     * Custom hast tag -> Vue component renderers.
+     * The original hast node is available on `props.node`.
+     */
+    nodes: {
+      a: ARenderer,
+      img: ImageRenderer,
+    },
+    /**
+     * Custom Vue components rendered via `component-json` blocks
+     */
+    components: {
+      BarChart,
+      Placeholder,
+    },
+    codeBlock: CodeBlockRenderer,
+    echart: {
+      renderer: EchartRenderer,
+      placeholder: Placeholder,
+    },
+    mermaid: MermaidRenderer,
   },
-
-  /**
-   * Custom code block renderer
-   */
-  codeBlock: {
-    renderer: CodeBlockRenderer,
+  plugins: {
+    remark: [remarkMath],
+    rehype: [rehypeKatex as unknown as Plugin],
   },
-
-  /**
-   * ECharts support
-   */
-  echart: {
-    renderer: EchartRenderer,
-    placeholder: Placeholder,
-  },
-
-  /**
-   * Mermaid diagrams
-   */
-  mermaid: {
-    renderer: MermaidRenderer,
-  },
-
-  /**
-   * Markdown / HTML plugins
-   */
-  remarkPlugins: [remarkMath],
-  rehypePlugins: [rehypeKatex as unknown as Plugin],
-  /**
-   * built-in remarkRehype plugin options
-   */
-  remarkRehypeOptions: {
-    allowDangerousHtml: true,
-  },
-  /**
-   * built-in rehypeSanitize plugin custom schema
-   */
-  rehypeSanitizeSchema: {
-    attributes: {
-      "*": ["className", "style"],
+  processor: {
+    remarkRehype: {
+      allowDangerousHtml: true,
+    },
+    sanitizeSchema: {
+      attributes: {
+        "*": ["className", "style"],
+      },
     },
   },
 });
@@ -141,9 +125,11 @@ export const MarkdownRenderer = createMarkdownRenderer({
 
 ```ts
 createMarkdownRenderer({
-  mermaid: { renderer },
-  echart: { renderer },
-  codeBlock: { renderer },
+  renderers: {
+    mermaid: renderer,
+    echart: { renderer },
+    codeBlock: renderer,
+  },
 });
 ```
 
@@ -159,13 +145,15 @@ createMarkdownRenderer({
 
 Each feature is **opt-in**:
 
-| Feature        | Config Key                        |
-| -------------- | --------------------------------- |
-| Code blocks    | `codeBlock`                       |
-| Mermaid        | `mermaid`                         |
-| ECharts        | `echart`                          |
-| Vue components | `componentsMap`                   |
-| LaTeX          | `remarkPlugins` / `rehypePlugins` |
+| Feature             | Config Key                             |
+| ------------------- | -------------------------------------- |
+| Code blocks         | `renderers.codeBlock`                  |
+| Mermaid             | `renderers.mermaid`                    |
+| ECharts             | `renderers.echart`                     |
+| HAST node renderers | `renderers.nodes`                      |
+| Vue components      | `renderers.components`                 |
+| LaTeX               | `plugins.remark` / `plugins.rehype`    |
+| Processor internals | `processor.remarkRehype/sanitizeSchema` |
 
 If you don’t configure it, it doesn’t exist.
 
@@ -191,8 +179,8 @@ This allows you to implement:
 - Streaming-friendly UI
 
 ```ts
-codeBlock: {
-  renderer: CodeBlockRenderer,
+renderers: {
+  codeBlock: CodeBlockRenderer,
 }
 ```
 
@@ -275,9 +263,11 @@ codeBlock: {
 Configuration:
 
 ```ts
-echart: {
-  renderer: EchartRenderer,
-  placeholder: Placeholder,
+renderers: {
+  echart: {
+    renderer: EchartRenderer,
+    placeholder: Placeholder,
+  },
 }
 ```
 
@@ -344,8 +334,8 @@ sequenceDiagram
 ````
 
 ```ts
-mermaid: {
-  renderer: MermaidRenderer,
+renderers: {
+  mermaid: MermaidRenderer,
 }
 ```
 
@@ -360,8 +350,10 @@ sequenceDiagram
 ## LaTeX Support
 
 ```ts
-remarkPlugins: [remarkMath],
-rehypePlugins: [rehypeKatex],
+plugins: {
+  remark: [remarkMath],
+  rehype: [rehypeKatex],
+}
 ```
 
 $$

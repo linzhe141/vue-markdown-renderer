@@ -1,20 +1,20 @@
 import { Component, defineComponent, h, PropType, provide } from "vue";
-import { unified, type Plugin } from "unified";
-import remarkParse from "remark-parse";
-import remarkRehype from "remark-rehype";
-import remarkGfm from "remark-gfm";
-import rehypeRaw from "rehype-raw";
-import rehypeSanitize from "rehype-sanitize";
+import type { Components } from "hast-util-to-jsx-runtime";
 import type { Schema } from "hast-util-sanitize";
 import deepmerge from "deepmerge";
-
-import { remarkCompleteTable } from "./plugin/remarkTable.js";
-import { rehypeCodeBlock } from "./plugin/rehypeCodeBlock.js";
-import { rehypeTable } from "./plugin/rehypeTable.js";
-import { rehypeSegmentText } from "./plugin/rehypeSegmentText.js";
+import rehypeRaw from "rehype-raw";
+import rehypeSanitize from "rehype-sanitize";
+import remarkGfm from "remark-gfm";
+import remarkParse from "remark-parse";
+import remarkRehype from "remark-rehype";
+import { unified, type PluggableList, type Processor } from "unified";
 
 import VueMarkdownRenderer from "./VueMarkdownRenderer.js";
 import { buildSanitizeSchema } from "./buildSanitizeSchema.js";
+import { rehypeCodeBlock } from "./plugin/rehypeCodeBlock.js";
+import { rehypeSegmentText } from "./plugin/rehypeSegmentText.js";
+import { rehypeTable } from "./plugin/rehypeTable.js";
+import { remarkCompleteTable } from "./plugin/remarkTable.js";
 import {
   markdownRendererOptionsKey,
   markdownRendererProcessorKey,
@@ -24,46 +24,113 @@ interface RemarkRehypeOptions {
   allowDangerousHtml?: boolean;
   [key: string]: any;
 }
+
+type PluginList = PluggableList;
+
+export interface MarkdownRendererPlugins {
+  remark?: PluginList;
+  rehype?: PluginList;
+}
+
+export interface MarkdownRendererProcessorOptions {
+  remarkRehype?: RemarkRehypeOptions;
+  sanitizeSchema?: Schema;
+  textSegmenterLocale?: string;
+}
+
+export interface MarkdownRendererRenderers {
+  /**
+   * Custom hast tag -> Vue component mapping.
+   */
+  nodes?: Record<string, Component>;
+  /**
+   * Component registry used by `component-json` code blocks.
+   */
+  components?: Record<string, Component>;
+  codeBlock?: Component;
+  mermaid?: Component;
+  echart?: {
+    renderer: Component;
+    placeholder?: Component;
+  };
+  table?: Component;
+}
+
 export type ApiOptions = {
+  renderers?: MarkdownRendererRenderers;
+  plugins?: MarkdownRendererPlugins;
+  processor?: MarkdownRendererProcessorOptions;
+
+  /**
+   * @deprecated Use `renderers.components` or `renderers.nodes`.
+   */
   componentsMap?: Record<string, Component>;
+  /**
+   * @deprecated Use `renderers.codeBlock`.
+   */
   codeBlock?: {
     renderer: Component;
   };
+  /**
+   * @deprecated Use `renderers.mermaid`.
+   */
   mermaid?: {
     renderer: Component;
   };
+  /**
+   * @deprecated Use `renderers.echart`.
+   */
   echart?: {
     renderer: Component;
     placeholder: Component;
   };
+  /**
+   * @deprecated Use `renderers.table`.
+   */
   table?: {
     renderer: Component;
   };
-  rehypePlugins?: Plugin[];
-  remarkPlugins?: Plugin[];
+  /**
+   * @deprecated Use `plugins.rehype`.
+   */
+  rehypePlugins?: PluginList;
+  /**
+   * @deprecated Use `plugins.remark`.
+   */
+  remarkPlugins?: PluginList;
+  /**
+   * @deprecated Use `processor.remarkRehype`.
+   */
   remarkRehypeOptions?: RemarkRehypeOptions;
+  /**
+   * @deprecated Use `processor.sanitizeSchema`.
+   */
   rehypeSanitizeSchema?: Schema;
+  /**
+   * @deprecated Use `processor.textSegmenterLocale`.
+   */
   textSegmenterLocale?: string;
 };
 
-export function createMarkdownRenderer(options?: ApiOptions) {
-  options = options || {};
-  const processor = unified()
-    .use(remarkParse)
-    .use(remarkGfm)
-    .use(remarkCompleteTable)
-    .use(options.remarkPlugins ?? [])
-    .use(remarkRehype, options.remarkRehypeOptions || {})
-    .use(rehypeSegmentText, { locale: options.textSegmenterLocale })
-    .use(rehypeRaw)
-    .use(
-      rehypeSanitize,
-      deepmerge(buildSanitizeSchema(), options.rehypeSanitizeSchema || {})
-    )
-    // code block 的 rehype 插件必须放在 rehypeRaw 之后，rehypeTable 的 rehype 插件必须放在 rehypeCodeBlock 之后
-    .use(rehypeCodeBlock)
-    .use(rehypeTable)
-    .use(options.rehypePlugins ?? []);
+export interface ResolvedApiOptions {
+  renderers: {
+    nodes: Record<string, Component>;
+    components: Record<string, Component>;
+    codeBlock?: Component;
+    mermaid?: Component;
+    echart?: {
+      renderer: Component;
+      placeholder?: Component;
+    };
+    table?: Component;
+  };
+  plugins: Required<MarkdownRendererPlugins>;
+  processor: Required<MarkdownRendererProcessorOptions>;
+}
+
+export function createMarkdownRenderer(options: ApiOptions = {}) {
+  const resolvedOptions = resolveApiOptions(options);
+  const processor = createProcessor(resolvedOptions);
 
   return defineComponent({
     name: "VueMarkdownRendererWrapper",
@@ -78,8 +145,9 @@ export function createMarkdownRenderer(options?: ApiOptions) {
       },
     },
     setup(props) {
-      provide(markdownRendererOptionsKey, options);
+      provide(markdownRendererOptionsKey, resolvedOptions);
       provide(markdownRendererProcessorKey, processor);
+
       return () =>
         h(VueMarkdownRenderer, {
           source: props.source,
@@ -87,4 +155,72 @@ export function createMarkdownRenderer(options?: ApiOptions) {
         });
     },
   });
+}
+
+function resolveApiOptions(options: ApiOptions): ResolvedApiOptions {
+  const legacyComponents = options.componentsMap ?? {};
+
+  return {
+    renderers: {
+      nodes: {
+        ...legacyComponents,
+        ...(options.renderers?.nodes ?? {}),
+      } as Record<string, Component>,
+      components: options.renderers?.components ?? legacyComponents,
+      codeBlock: options.renderers?.codeBlock ?? options.codeBlock?.renderer,
+      mermaid: options.renderers?.mermaid ?? options.mermaid?.renderer,
+      echart: options.renderers?.echart ?? options.echart,
+      table: options.renderers?.table ?? options.table?.renderer,
+    },
+    plugins: {
+      remark: options.plugins?.remark ?? options.remarkPlugins ?? [],
+      rehype: options.plugins?.rehype ?? options.rehypePlugins ?? [],
+    },
+    processor: {
+      remarkRehype:
+        options.processor?.remarkRehype ?? options.remarkRehypeOptions ?? {},
+      sanitizeSchema:
+        options.processor?.sanitizeSchema ?? options.rehypeSanitizeSchema ?? {},
+      textSegmenterLocale:
+        options.processor?.textSegmenterLocale ??
+        options.textSegmenterLocale ??
+        "",
+    },
+  };
+}
+
+function createProcessor(options: ResolvedApiOptions) {
+  const processor = unified()
+    .use(remarkParse)
+    .use(remarkGfm)
+    .use(remarkCompleteTable)
+    .use(options.plugins.remark)
+    .use(remarkRehype, options.processor.remarkRehype)
+    .use(rehypeSegmentText, {
+      locale: options.processor.textSegmenterLocale || undefined,
+    })
+    .use(rehypeRaw)
+    .use(
+      rehypeSanitize,
+      deepmerge(buildSanitizeSchema(), options.processor.sanitizeSchema)
+    );
+
+  // Code block metadata depends on raw HTML parsing,
+  // table replacement depends on the normalized code block tree shape.
+  useRehypePipeline(processor, [
+    rehypeCodeBlock,
+    rehypeTable,
+    ...options.plugins.rehype,
+  ]);
+
+  return processor;
+}
+
+function useRehypePipeline(
+  processor: Processor<any, any, any, any, any>,
+  plugins: PluginList
+) {
+  for (const plugin of plugins) {
+    processor.use(plugin as any);
+  }
 }

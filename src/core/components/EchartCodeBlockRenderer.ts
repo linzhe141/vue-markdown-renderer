@@ -18,11 +18,11 @@ export const EchartCodeBlockRenderer = defineComponent({
 
   setup(props) {
     const options = inject(markdownRendererOptionsKey)!;
-    const EchartRenderer = options.echart?.renderer;
+    const EchartRenderer = options.renderers.echart?.renderer;
     if (!EchartRenderer) {
       throw new Error(`echartRenderer must be provided`);
     }
-    const EchartRendererPlaceholder = options.echart?.placeholder;
+    const EchartRendererPlaceholder = options.renderers.echart?.placeholder;
     const parsedCode = computed(() =>
       parseJson<Record<string, unknown>>(props.code)
     );
